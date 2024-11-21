@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components{
+    /* class untuk active pada sidebar */
+    .active{
+        background-color: theme('colors.blue.500/50');
+        color: theme('colors.white') !important;
+
+    }
+
+    .active:hover{
+        background-color: theme('colors.blue.600') !important;
+    }
+
+    .form-error{
+        @apply !bg-red-200 !border-red-700;
+    }
+
+}
