@@ -191,15 +191,14 @@ class SignConfirm extends ModalComponent
         );
 
         //set password
-        $pdf->SetProtection(
-            [
-                'print',       // Izinkan mencetak
-                'copy',        // Izinkan menyalin konten
-                'modify',      // Izinkan modifikasi
-            ],
-            'posai123',   // Password pengguna (user password)
-            'bwt123'   // Password pemilik (owner password)
-        );
+        // $pdf->SetProtection(
+        //     [
+        //         'copy',        // Izinkan menyalin konten
+        //         'modify',      // Izinkan modifikasi
+        //     ],
+        //     'posai123',   // Password pengguna (user password)
+        //     'bwt123'   // Password pemilik (owner password)
+        // );
 
         // Menyimpan kembali file asli
         $pdf->Output($pdfContent, 'F'); // 'F' mode untuk overwrite file

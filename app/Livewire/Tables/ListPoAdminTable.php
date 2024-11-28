@@ -9,6 +9,7 @@ use App\Models\DetailPo;
 use App\Models\HeaderPo;
 use Livewire\Attributes\On;
 use App\Traits\TrackerTrait;
+use Smalot\PdfParser\Parser;
 use setasign\Fpdi\Tcpdf\Fpdi;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -58,7 +59,7 @@ final class ListPoAdminTable extends PowerGridComponent
             'approverKedua' => [
                 'name'
             ],
-            'supplier' =>[
+            'supplier' => [
                 'name'
             ]
         ];
@@ -143,7 +144,8 @@ final class ListPoAdminTable extends PowerGridComponent
     }
 
     #[On('done-po')]
-    public function donePo(int $id){
+    public function donePo(int $id)
+    {
         $po =  HeaderPo::find($id);
         $po->update([
             'status' => StatusEnum::DONE
@@ -185,8 +187,12 @@ final class ListPoAdminTable extends PowerGridComponent
 
         // Path ke PDF asli
         $pdfContent = storage_path('app/public/' . $file->file);
+
+
         // Membuat instance FPDI (extends TCPDF)
+        //make fpdi instance
         $pdf = new Fpdi();
+
 
         // Menyimpan konfigurasi dasar PDF
         $pdf->SetCreator(PDF_CREATOR);
@@ -209,6 +215,7 @@ final class ListPoAdminTable extends PowerGridComponent
         $y_mm_tcpdf = $pageHeight - $y_mm;
         // Memuat file PDF asli
         $pageCount = $pdf->setSourceFile($pdfContent);
+
 
         // Import setiap halaman dari PDF asli
         for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
@@ -252,7 +259,7 @@ final class ListPoAdminTable extends PowerGridComponent
                 ->when(fn($row) => $row->status != StatusEnum::SIGNED && $row->status != StatusEnum::CANCEL && $row->status != StatusEnum::REVISE && $row->status != StatusEnum::CANCEL && $row->status != StatusEnum::CANCEL &&  $row->status != StatusEnum::SENDED)
                 ->hide(),
             Rule::button('cancel')
-                ->when(fn($row) => $row->status != StatusEnum::SIGNED)
+                ->when(fn($row) => $row->status != StatusEnum::SIGNED && $row->status != StatusEnum::SENDED)
                 ->hide(),
             Rule::button('confirm')
                 ->when(fn($row) => $row->status != StatusEnum::SENDED)

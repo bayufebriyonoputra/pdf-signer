@@ -44,7 +44,7 @@ class SendEmail extends ModalComponent
             $details['attachments'][] = $this->files->getRealPath();
         }
         $filePo = DetailPo::where('header_id', $this->po->id)->first();
-        $details['attachments'][] = storage_path("app/public/$filePo->file");
+        $details['attachment_po'] = storage_path("app/public/$filePo->file");
 
         $emailSupplier = $this->po->supplier->email;
         $listEmail = explode('|', $emailSupplier);

@@ -16,7 +16,9 @@
         "livewire/volt": "^1.0",
         "openspout/openspout": "^4.25",
         "power-components/livewire-powergrid": "^5.10",
+        "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",
+        "smalot/pdfparser": "^2.11",
         "tecnickcom/tcpdf": "^6.7",
         "wire-elements/modal": "^2.0"
     },

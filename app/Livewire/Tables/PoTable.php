@@ -23,7 +23,7 @@ final class PoTable extends PowerGridComponent
     use WithExport, LivewireAlert;
 
     public $poId = null;
-    protected $listeners=[
+    protected $listeners = [
         'deletePo'
     ];
 
@@ -44,7 +44,7 @@ final class PoTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return HeaderPo::query()->with(['approverPertama', 'approverKedua'])->orderByDesc('created_at');
+        return HeaderPo::query()->with(['approverPertama', 'approverKedua', 'supplier'])->orderByDesc('created_at');
     }
 
     public function relationSearch(): array
@@ -64,6 +64,7 @@ final class PoTable extends PowerGridComponent
         return PowerGrid::fields()
             ->add('id')
             ->add('no_po')
+            ->add('supplier_name', fn($po) => e($po->supplier->name))
             ->add('status_label', fn($po) => e($po->status->label()))
             ->add('checker', fn($po) => e($po->approverPertama->name ?? 'Skipped'))
             ->add('signer', fn($po) => e($po->approverKedua->name))
@@ -74,6 +75,9 @@ final class PoTable extends PowerGridComponent
     {
         return [
             Column::make('No Po', 'no_po')
+                ->searchable()
+                ->sortable(),
+            Column::make('Nama Supplier', 'supplier_name')
                 ->searchable()
                 ->sortable(),
             Column::make('Status', 'status_label')
@@ -90,8 +94,7 @@ final class PoTable extends PowerGridComponent
 
     public function filters(): array
     {
-        return [
-        ];
+        return [];
     }
 
     // #[\Livewire\Attributes\On('edit')]
@@ -107,12 +110,13 @@ final class PoTable extends PowerGridComponent
             Button::add('delete')
                 ->slot('<i class="bi bi-trash-fill"></i>')
                 ->class('bg-red-500 hover:bg-red-600 py-2 px-4 text-white rounded-md')
-                ->dispatch('delete', ['id'  => $row->id ])
+                ->dispatch('delete', ['id'  => $row->id])
         ];
     }
 
     #[On('delete')]
-    public function condirmDelete($id){
+    public function condirmDelete($id)
+    {
         $this->poId = $id;
         $this->alert('warning', 'Are you sure , you want to delete this data ? ', [
             'icon' => 'warning',
@@ -126,7 +130,8 @@ final class PoTable extends PowerGridComponent
         ]);
     }
 
-    public function deletePo(){
+    public function deletePo()
+    {
 
         HeaderPo::destroy($this->poId);
         $this->dispatch('success-notif', message: 'PO berhasil dihapus');
