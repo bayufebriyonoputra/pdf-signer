@@ -10,6 +10,11 @@ layout('layouts.admin');
 
     <!-- Table -->
     <livewire:tables.list-po-admin-table />
+
+    <!-- Legend -->
+    <div class="mt-3">
+        <livewire:components.legend />
+    </div>
 </div>
 
 <x-slot:script>

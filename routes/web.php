@@ -28,12 +28,16 @@ Route::middleware('role:admin,signer,checker')->group(function(){
     Volt::route('/dashboard', 'pages.admin.dashboard');
     Volt::route('/master-approver', 'pages.admin.master_approver');
     Volt::route('/master-user', 'pages.admin.master_user');
-    Volt::route('/po-reminder', 'pages.po.list_po_reminder');
+
 
     Volt::route('/purchase-order', 'pages.po.purchase_order');
     Volt::route('/list-po', 'pages.po.list_po');
     Volt::route('/master-supplier', 'pages.admin.master_supplier');
     Volt::route('/po-pending', 'pages.po.po_pending');
+});
+
+Route::middleware('role:user,admin,signer,checker')->group(function(){
+    Volt::route('/po-reminder', 'pages.po.list_po_reminder');
 });
 
 require __DIR__ . '/auth.php';

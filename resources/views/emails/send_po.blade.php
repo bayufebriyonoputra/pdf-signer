@@ -102,12 +102,17 @@
       <p>Terimakasih,</p>
       <p><strong>Setyani</strong><br>
          PURCHASING SECTION<br>
-         PT SURABAYA AUTO COMP INDONESIA</p>
+         PT SURABAYA AUTOCOMP INDONESIA</p>
     </div>
     <div class="footer">
       <p>Ngoro Industri Persada Kav T-1<br>
-      PO.BOX 11 Ngiri 61385<br>
+      PO.BOX 11 Ngoro 61385<br>
       Mojokerto, East Java - Indonesia</p>
+
+      <p>
+        Phone : +62-321-6817400<br>
+        Faximile : +62-321-6817541
+      </p>
     </div>
   </div>
 </body>

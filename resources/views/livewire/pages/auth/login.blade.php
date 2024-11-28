@@ -23,6 +23,8 @@ $login = function () {
         $this->redirectIntended(default: url('/dashboard'), navigate: false);
     }else if(auth()->user()->role === RoleEnum::SIGNER || auth()->user()->role === RoleEnum::CHECKER){
         $this->redirectIntended(default: url('/need-approve'), navigate: false);
+    }else if(auth()->user()->role === RoleEnum::USER){
+        $this->redirectIntended(default: url('/po-reminder'), navigate: false);
     }
 
 };
