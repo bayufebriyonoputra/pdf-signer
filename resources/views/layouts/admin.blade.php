@@ -14,7 +14,7 @@
 <body>
     <div class="flex h-screen">
         <x-sidebar.admin />
-        <div class="flex-1 p-6">
+        <div class="flex-1 p-6 overflow-y-auto">
             {{ $slot }}
         </div>
     </div>

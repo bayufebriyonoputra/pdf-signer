@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use setasign\Fpdi\Tcpdf\Fpdi;
@@ -57,6 +58,7 @@ class SendPoMail extends Mailable
         foreach ($this->details['attachments'] as $attachment) {
             $attachments[] = Attachment::fromPath($attachment);
         }
+
         $pdfContent = $this->details['attachment_po'];
         //make fpdi instance
         $pdf = new Fpdi();
@@ -65,26 +67,32 @@ class SendPoMail extends Mailable
         $pdf->SetAuthor('Electronics PO');
         $pdf->SetTitle('Po Digitaly Signed');
 
-        $pageCount = $pdf->setSourceFile($pdfContent);
+        try{
+            $pageCount = $pdf->setSourceFile($pdfContent);
 
-        // Import setiap halaman dari PDF asli
-        for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
-            $pdf->AddPage();
-            $tplId = $pdf->importPage($pageNo);
-            $pdf->useTemplate($tplId, 0, 0, null, null, true);
+            // Import setiap halaman dari PDF asli
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $pdf->AddPage();
+                $tplId = $pdf->importPage($pageNo);
+                $pdf->useTemplate($tplId, 0, 0, null, null, true);
+            }
+
+            $pdf->SetProtection(
+                [
+                    'copy',        // Izinkan menyalin konten
+                    'modify',      // Izinkan modifikasi
+                ],
+                'posai123',   // Password pengguna (user password)
+                'bwt123'   // Password pemilik (owner password)
+            );
+            //Letakkan Pdf Password sementara
+            $pdf->Output(storage_path('app/public/Lampiran PO.pdf'), 'F');
+            $attachments[] = Attachment::fromPath(storage_path('app/public/Lampiran PO.pdf'));
+        }catch(Exception $e){
+            //Atasi jika fpdi tidak bisa baca karena file terlanjur di password
+            $attachments[] = Attachment::fromPath($pdfContent);
         }
 
-        $pdf->SetProtection(
-            [
-                'copy',        // Izinkan menyalin konten
-                'modify',      // Izinkan modifikasi
-            ],
-            'posai123',   // Password pengguna (user password)
-            'bwt123'   // Password pemilik (owner password)
-        );
-        //Letakkan Pdf Password sementara
-        $pdf->Output(storage_path('app/public/Lampiran PO.pdf'), 'F');
-        $attachments[] = Attachment::fromPath(storage_path('app/public/Lampiran PO.pdf'));
         return $attachments;
     }
 }

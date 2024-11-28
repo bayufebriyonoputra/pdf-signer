@@ -1,7 +1,10 @@
 <aside class="flex overflow-y-auto flex-col px-5 py-8 w-64 h-screen bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700">
+
+
     <a href="#">
         <p class="text-sm font-semibold text-gray-500">Welcome Back, {{auth()->user()->name}}</p>
     </a>
+
 
     <div class="flex flex-col flex-1 justify-between mt-6">
         <nav class="-mx-3 space-y-6">
@@ -50,11 +53,12 @@
                 <a class="{{request()->is('po-pending') ? 'active' : ''}} flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-300 transform dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="/po-pending">
                     <i class="bi bi-clock-history"></i>
                     <span class="mx-2 text-sm font-medium">List PO Pending</span>
+                    <livewire:components.reminder_badge content="pending"/>
                 </a>
                 <a class="{{request()->is('po-reminder') ? 'active' : ''}} relative flex items-center px-3 py-2 text-gray-600 rounded-lg transition-colors duration-300 transform dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700" href="{{url('/po-reminder')}}">
                     <i class="bi bi-clock-history"></i>
                     <span class="mx-2 text-sm font-medium">List PO Reminder</span>
-                    <livewire:components.reminder_badge />
+                    <livewire:components.reminder_badge content="reminder"/>
                 </a>
 
             </div>
