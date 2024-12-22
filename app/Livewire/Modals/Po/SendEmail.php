@@ -8,6 +8,8 @@ use App\Mail\SendPoMail;
 use App\Models\DetailPo;
 use App\Models\HeaderPo;
 use App\Traits\TrackerTrait;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Mail;
 use LivewireUI\Modal\ModalComponent;
@@ -43,7 +45,7 @@ class SendEmail extends ModalComponent
         if($this->files){
             $details['attachments'][] = $this->files->getRealPath();
         }
-        $filePo = DetailPo::where('header_id', $this->po->id)->first();
+        $filePo = DetailPo::where('header_id', $this->po->id)->get()->sortByDesc('created_at')->first();
         $details['attachment_po'] = storage_path("app/public/$filePo->file");
 
         $emailSupplier = $this->po->supplier->email;
@@ -57,13 +59,19 @@ class SendEmail extends ModalComponent
             ]);
         }
 
-        $this->addTrack(
-           $this->noPo,
-            'PO Sended',
-            'Purchase Order berhasil dikirim  oleh ' .  auth()->user()->name,
-            '<i class="bi bi-envelope-check-fill"></i>',
-            'bg-teal-600'
-        );
+        try{
+            $this->addTrack(
+               $this->noPo,
+                'PO Sended',
+                'Purchase Order berhasil dikirim  oleh ' .  auth()->user()->name,
+                '<i class="bi bi-envelope-check-fill"></i>',
+                'bg-teal-600'
+            );
+        }catch(Exception $e){
+            Log::error('Terajdi kesalahan : ' . $e->getMessage(), [
+                'exception' => $e
+            ]);
+        }
 
         $this->dispatch('success-notif', message:'Berhasil mengirim email');
         $this->dispatch('pg:eventRefresh-default');

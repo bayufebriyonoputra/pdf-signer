@@ -10,6 +10,8 @@ import * as FilePond from 'filepond';
 import 'filepond/dist/filepond.min.css';
 import Choices from 'choices.js';
 import "choices.js/public/assets/styles/choices.css";
+import flatpickr from "flatpickr";
+import 'flatpickr/dist/flatpickr.min.css';
 
 
 window.Choices = Choices;

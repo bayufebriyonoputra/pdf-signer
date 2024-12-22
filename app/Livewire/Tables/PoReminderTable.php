@@ -5,6 +5,7 @@ namespace App\Livewire\Tables;
 use App\Models\HeaderPo;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\On;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Exportable;
@@ -29,7 +30,7 @@ final class PoReminderTable extends PowerGridComponent
 
     public function setUp(): array
     {
-        $this->showCheckBox(attribute:'is_remindered');
+        $this->showCheckBox();
 
         return [
             Exportable::make('export')
@@ -42,18 +43,36 @@ final class PoReminderTable extends PowerGridComponent
         ];
     }
 
+    public function header(): array
+    {
+        return [
+            Button::add('bulk-add')
+                ->slot('REMINDER')
+                ->class('bg-green-500 hover:bg-green-600 rounded-md text-white px-4 py-2')
+                ->dispatch('bulk-add', []),
+            Button::add('bulk-remove')
+                ->slot('CANCEL')
+                ->class('bg-red-500 hover:bg-red-600 rounded-md text-white px-4 py-2')
+                ->dispatch('bulk-remove', []),
+
+        ];
+
+    }
+
     public function datasource(): Builder
     {
         $today = Carbon::today();
         $untilDate = $today->copy()->addDay(4);
 
 
-        return HeaderPo::query()->where('due_date', '>=',$today)->where('due_date', '<=', $untilDate);
+        return HeaderPo::query()->where('due_date', '>=', $today)->where('due_date', '<=', $untilDate)->with('supplier');
     }
 
     public function relationSearch(): array
     {
-        return [];
+        return [
+            'supplier' => ['name']
+        ];
     }
 
     public function fields(): PowerGridFields
@@ -64,7 +83,8 @@ final class PoReminderTable extends PowerGridComponent
             ->add('status')
             ->add('status_label', fn($po) => $po->status->badge())
             ->add('due_date')
-            ->add('jenis_transaksi_label' , fn($po) => e($po->jenis_transaksi->label()))
+            ->add('supplier_name', fn($po) => e($po->supplier->name))
+            ->add('jenis_transaksi_label', fn($po) => e($po->jenis_transaksi->label()))
             ->add('is_remindered')
             ->add('created_at')
             ->add('due_date_formated', fn($po) => Carbon::parse($po->due_date)->format('d M y'));
@@ -77,14 +97,16 @@ final class PoReminderTable extends PowerGridComponent
                 ->searchable()
                 ->sortable(),
             Column::make('Status', 'status_label'),
-            Column::make('Due Date', 'due_date_formated')
+            Column::make('Due Date', 'due_date_formated', 'due_date')
                 ->sortable()
                 ->searchable(),
+            Column::make('supplier_name', 'supplier_name')
+                ->searchable(),
             Column::make('Jenis Transaksi', 'jenis_transaksi_label'),
-          Column::add()
-            ->title('Sudah Reminder')
-            ->field('is_remindered')
-            ->toggleable(hasPermission:true, trueLabel:'Sudah', falseLabel:'Belum'),
+            Column::add()
+                ->title('Sudah Reminder')
+                ->field('is_remindered')
+                ->toggleable(hasPermission: true, trueLabel: 'Sudah', falseLabel: 'Belum'),
 
             //Column::action('Action')
         ];
@@ -95,6 +117,7 @@ final class PoReminderTable extends PowerGridComponent
         return [
             Filter::boolean('is_remindered', 'is_remindered')
                 ->label('Sudah Reminder', 'Belum Reminder'),
+            Filter::datepicker('due_date_formated', 'due_date'),
 
         ];
     }
@@ -103,6 +126,27 @@ final class PoReminderTable extends PowerGridComponent
     public function edit($rowId): void
     {
         $this->js('alert(' . $rowId . ')');
+    }
+
+    #[On('bulk-add')]
+    public function bulkAdd(){
+        $headerPo = HeaderPo::whereIn('id', $this->checkboxValues)->get();
+        foreach($headerPo as $po){
+            $po->is_remindered = true;
+            $po->save();
+        }
+        $this->dispatch('success-notif', message:'Berhasil reminder');
+        $this->dispatch('pg:eventRefresh-default');
+    }
+    #[On('bulk-remove')]
+    public function bulkRemove(){
+        $headerPo = HeaderPo::whereIn('id', $this->checkboxValues)->get();
+        foreach($headerPo as $po){
+            $po->is_remindered = false;
+            $po->save();
+        }
+        $this->dispatch('success-notif', message:'Berhasil cancel reminder');
+        $this->dispatch('pg:eventRefresh-default');
     }
 
     // public function actions(HeaderPo $row): array

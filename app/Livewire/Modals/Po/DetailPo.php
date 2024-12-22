@@ -125,7 +125,7 @@ class DetailPo extends ModalComponent
                 }
             }
             $po->update([
-                'status' => StatusEnum::REVISE->value
+                'status' => StatusEnum::NEW->value
             ]);
             $this->addTrack(
                 $po->no_po,

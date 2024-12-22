@@ -5,6 +5,7 @@ namespace App\Livewire\Tables;
 use App\Models\Supplier;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\On;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Exportable;
@@ -32,6 +33,16 @@ final class SupplierTable extends PowerGridComponent
             Footer::make()
                 ->showPerPage()
                 ->showRecordCount(),
+        ];
+    }
+
+    public function header(): array
+    {
+        return [
+            Button::add('bulk-delete')
+                ->slot('Bulk Delete (<span x-text="window.pgBulkActions.count(\'' . $this->tableName . '\')"></span>)')
+                ->class('bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md')
+                ->dispatch('bulkDelete', [])
         ];
     }
 
@@ -69,14 +80,13 @@ final class SupplierTable extends PowerGridComponent
 
     public function filters(): array
     {
-        return [
-        ];
+        return [];
     }
 
 
     public function edit($rowId): void
     {
-        $this->js('alert('.$rowId.')');
+        $this->js('alert(' . $rowId . ')');
     }
 
     public function actions(Supplier $row): array
@@ -91,6 +101,15 @@ final class SupplierTable extends PowerGridComponent
                 ->class('bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md')
                 ->dispatch('delete', ['id' => $row->id])
         ];
+    }
+
+    #[On('bulkDelete')]
+    public function bulkDelete(): void
+    {
+        if ($this->checkboxValues) {
+            Supplier::destroy($this->checkboxValues);
+            $this->js('window.pgBulkActions.clearAll()');
+        }
     }
 
     /*

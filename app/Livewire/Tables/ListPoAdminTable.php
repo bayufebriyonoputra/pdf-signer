@@ -30,6 +30,9 @@ final class ListPoAdminTable extends PowerGridComponent
 {
     use WithExport, TrackerTrait;
 
+    public string $tableName = 'table-po-admin';
+
+
     public function setUp(): array
     {
         $this->showCheckBox();
@@ -42,6 +45,16 @@ final class ListPoAdminTable extends PowerGridComponent
             Footer::make()
                 ->showPerPage()
                 ->showRecordCount(),
+        ];
+    }
+
+    public function header(): array
+    {
+        return [
+            Button::add('bulk-download')
+                ->slot('Download PDF (<span x-text="window.pgBulkActions.count(\'' . $this->tableName . '\')"></span>)')
+                ->class('bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-md text-white')
+                ->dispatch('bulk-download', [])
         ];
     }
 
@@ -115,6 +128,30 @@ final class ListPoAdminTable extends PowerGridComponent
     {
         $this->js('alert(' . $rowId . ')');
     }
+    #[On('bulk-download')]
+    public function bulkDownload()
+    {
+        // $headerPo = HeaderPo::whereIn('id', $this->checkboxValues)->get();
+
+        //buat zip
+        $zipFileName = 'downloaded-po.zip';
+        $zip = new \ZipArchive();
+        $zip->open(public_path($zipFileName), \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+
+        foreach($this->checkboxValues as $c){
+            $file = DetailPo::where('header_id', $c)->get()->sortByDesc('created_at')->first();
+            $filePath = storage_path("app/public/$file->file");
+            if(file_exists($filePath)){
+                $zip->addFile($filePath, basename($filePath));
+            }
+        }
+
+        $zip->close();
+
+        //download zip
+        return response()->download(public_path($zipFileName))->deleteFileAfterSend(true);
+
+    }
 
 
     public function actions(HeaderPo $row): array
@@ -164,17 +201,34 @@ final class ListPoAdminTable extends PowerGridComponent
     #[On('confirm-po')]
     public function confirmPo(int $id)
     {
-        $po =  HeaderPo::find($id);
-        $po->update([
-            'status' => StatusEnum::CONFIRMED
-        ]);
-        $this->addTrack(
-            $po->no_po,
-            'PO Confirmed',
-            'Purchase Order Berhasil diconfirm oleh' .  auth()->user()->name,
-            '<i class="bi bi-check-circle-fill"></i>',
-            'bg-indigo-700'
-        );
+        if($this->checkboxValues){
+            $headerPo = HeaderPo::whereIn('id', $this->checkboxValues)->get();
+            foreach($headerPo as $po){
+                $po->status = StatusEnum::CONFIRMED;
+                $po->save();
+                $this->addTrack(
+                    $po->no_po,
+                    'PO Confirmed',
+                    'Purchase Order Berhasil diconfirm oleh' .  auth()->user()->name,
+                    '<i class="bi bi-check-circle-fill"></i>',
+                    'bg-indigo-700'
+                );
+
+            }
+        }else{
+            $po =  HeaderPo::find($id);
+            $po->update([
+                'status' => StatusEnum::CONFIRMED
+            ]);
+            $this->addTrack(
+                $po->no_po,
+                'PO Confirmed',
+                'Purchase Order Berhasil diconfirm oleh' .  auth()->user()->name,
+                '<i class="bi bi-check-circle-fill"></i>',
+                'bg-indigo-700'
+            );
+        }
+
         $this->dispatch('success-notif', message: 'Berhasil confirm PO');
         $this->dispatch('pg:eventRefresh-default');
     }
@@ -256,7 +310,7 @@ final class ListPoAdminTable extends PowerGridComponent
         return [
             // Hide button edit for ID 1
             Rule::button('send')
-                ->when(fn($row) => $row->status != StatusEnum::SIGNED && $row->status != StatusEnum::CANCEL && $row->status != StatusEnum::REVISE && $row->status != StatusEnum::CANCEL && $row->status != StatusEnum::CANCEL &&  $row->status != StatusEnum::SENDED)
+                ->when(fn($row) => $row->status != StatusEnum::SIGNED && $row->status != StatusEnum::CANCEL && $row->status != StatusEnum::REVISE && $row->status != StatusEnum::CANCEL && $row->status != StatusEnum::CONFIRMED &&  $row->status != StatusEnum::SENDED)
                 ->hide(),
             Rule::button('cancel')
                 ->when(fn($row) => $row->status != StatusEnum::SIGNED && $row->status != StatusEnum::SENDED)
