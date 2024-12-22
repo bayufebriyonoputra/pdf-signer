@@ -7,6 +7,7 @@ use App\Mail\SendPoMail;
 use App\Models\Approver;
 use App\Models\DetailPo;
 use App\Models\HeaderPo;
+use App\Models\MasterStep;
 use Livewire\Attributes\On;
 use App\Traits\TrackerTrait;
 use Smalot\PdfParser\Parser;
@@ -177,23 +178,46 @@ final class ListPoAdminTable extends PowerGridComponent
                 ->slot('<i class="bi bi-list-check"></i>')
                 ->class('bg-lime-500 hover:bg-lime-700 text-white px-4 py-2 rounded-md')
                 ->dispatch('done-po', ['id' => $row->id]),
+            Button::add('undo')
+                ->slot('<i class="bi bi-arrow-counterclockwise"></i>')
+                ->class('bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-md')
+                ->dispatch('undo', ['id' => $row->id]),
         ];
     }
 
     #[On('done-po')]
     public function donePo(int $id)
     {
-        $po =  HeaderPo::find($id);
-        $po->update([
-            'status' => StatusEnum::DONE
-        ]);
-        $this->addTrack(
-            $po->no_po,
-            'PO Done',
-            'Purchase Order dikonfirmasi selesai oleh' .  auth()->user()->name,
-            '<i class="bi bi-list-check"></i>',
-            'bg-lime-500'
-        );
+        if($this->checkboxValues){
+            $pos = HeaderPo::whereIn('id', $this->checkboxValues)->get();
+            foreach($pos as $po){
+                $po->status = StatusEnum::DONE;
+                $po->save();
+
+                $this->addTrack(
+                    $po->no_po,
+                    'PO Done',
+                    'Purchase Order dikonfirmasi selesai oleh' .  auth()->user()->name,
+                    '<i class="bi bi-list-check"></i>',
+                    'bg-lime-500'
+                );
+
+            }
+
+        }else{
+            $po =  HeaderPo::find($id);
+            $po->update([
+                'status' => StatusEnum::DONE
+            ]);
+            $this->addTrack(
+                $po->no_po,
+                'PO Done',
+                'Purchase Order dikonfirmasi selesai oleh' .  auth()->user()->name,
+                '<i class="bi bi-list-check"></i>',
+                'bg-lime-500'
+            );
+        }
+
         $this->dispatch('success-notif', message: 'Berhasil Done PO');
         $this->dispatch('pg:eventRefresh-default');
     }
@@ -231,6 +255,27 @@ final class ListPoAdminTable extends PowerGridComponent
 
         $this->dispatch('success-notif', message: 'Berhasil confirm PO');
         $this->dispatch('pg:eventRefresh-default');
+    }
+
+    #[On('undo')]
+    public function undo(int $id) : void{
+        $po = HeaderPo::find($id);
+        $step = MasterStep::where('step_name', $po->status->value)->first();
+        if($step){
+            $po->status = $step->previous_step;
+            $po->save();
+            $this->addTrack(
+                $po->no_po,
+                'Action Has Been Undo',
+                'Status Purchase di undo oleh ' .  auth()->user()->name,
+                '<i class="bi bi-arrow-counterclockwise"></i>',
+                'bg-amber-600'
+            );
+            $this->dispatch('success-notif', message:'Berhasil Undo');
+
+        }else{
+            $this->dispatch('error-notif', message:'Status ini tidak dapat di undo😎');
+        }
     }
 
     #[On('cancel-po')]

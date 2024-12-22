@@ -33,4 +33,9 @@ use function Livewire\Volt\{state};
         <p class="text-sm font-bold">Done</p>
     </div>
 
+    <div class="flex gap-3 items-center">
+        <span class="px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-700"><i class="bi bi-arrow-counterclockwise"></i></span>
+        <p class="text-sm font-bold">Undo</p>
+    </div>
+
 </div>
