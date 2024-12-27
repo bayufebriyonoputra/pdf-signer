@@ -74,7 +74,7 @@ class SendEmail extends ModalComponent
         }
 
         $this->dispatch('success-notif', message:'Berhasil mengirim email');
-        $this->dispatch('pg:eventRefresh-default');
+        $this->dispatch('pg:eventRefresh-table-po-admin');
         $this->closeModal();
     }
 }

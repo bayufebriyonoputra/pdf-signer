@@ -15,7 +15,7 @@
                 <!-- Detail -->
                 <div class="flex-1">
                     <div class="flex justify-between items-center">
-                        <span class="text-sm font-medium text-gray-800">Diupload : {{ \Carbon\Carbon::parse($file->created_at)->locale('id')->translatedFormat('d M Y') }}</span>
+                        <span class="text-sm font-medium text-gray-800">Diupload : {{ \Carbon\Carbon::parse($file->created_at)->locale('id')->isoFormat('DD MMM YYYY hh:MM:ss') }}</span>
                         <a href="{{asset("storage/$file->file")}}" target="_blank" type="button" class="self-start px-4 py-2 w-max text-white bg-blue-500 rounded-md hover:bg-blue-700"><i class="bi bi-eye-fill"></i></a>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                         <div class="flex justify-between items-center mb-3">
                             <p class="flex-grow text-sm font-medium text-gray-700">{{ $notif->message }}</p>
                             <p class="ml-4 text-xs text-gray-500">
-                                {{ \Carbon\Carbon::parse($notif->created_at)->locale('id')->diffForHumans() }}</p>
+                                {{ \Carbon\Carbon::parse($notif->created_at)->locale('id')->isoFormat('DD MMM YYYY HH:mm:ss') }}</p>
                         </div>
                         <p class="text-xs text-gray-500">{{ $notif->description }}</p>
                     </div>

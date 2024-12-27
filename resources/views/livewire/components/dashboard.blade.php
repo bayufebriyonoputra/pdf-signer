@@ -25,6 +25,7 @@ mount(function () {
         ->orWhere('status', StatusEnum::SENDED)
         ->orWhere('status', StatusEnum::CONFIRMED)
         ->orWhere('status', StatusEnum::DONE)
+        ->orWhere('status', StatusEnum::CANCEL)
         ->count();
     $this->all = HeaderPo::count();
 });
