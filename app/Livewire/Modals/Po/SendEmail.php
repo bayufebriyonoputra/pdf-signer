@@ -45,6 +45,7 @@ class SendEmail extends ModalComponent
         if($this->files){
             $details['attachments'][] = $this->files->getRealPath();
         }
+        
         $filePo = DetailPo::where('header_id', $this->po->id)->get()->sortByDesc('created_at')->first();
         $details['attachment_po'] = storage_path("app/public/$filePo->file");
 
