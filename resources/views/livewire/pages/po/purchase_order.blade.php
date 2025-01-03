@@ -270,7 +270,7 @@ layout('layouts.admin');
                 choices.setChoiceByValue(c.id);
             });
             Livewire.on('clearChoices', ()=>{
-                choices.setChoiceByValue();
+                choices.removeActiveItems();
             });
 
         });

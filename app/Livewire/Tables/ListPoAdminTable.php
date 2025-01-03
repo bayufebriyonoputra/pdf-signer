@@ -141,9 +141,11 @@ final class ListPoAdminTable extends PowerGridComponent
 
         foreach($this->checkboxValues as $c){
             $file = DetailPo::where('header_id', $c)->get()->sortByDesc('created_at')->first();
+            //perbaiki nanti seharusnya koneksi ke sql cukup sekali tidak di looping
+            $noPo = HeaderPo::find($c)->no_po;
             $filePath = storage_path("app/public/$file->file");
             if(file_exists($filePath)){
-                $zip->addFile($filePath, basename($filePath));
+                $zip->addFile($filePath, $noPo . ".pdf");
             }
         }
 
