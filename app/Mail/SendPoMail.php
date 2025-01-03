@@ -58,7 +58,7 @@ class SendPoMail extends Mailable
         foreach ($this->details['attachments'] as $attachment) {
             $attachments[] = Attachment::fromPath($attachment);
         }
-        
+
 
         $pdfContent = $this->details['attachment_po'];
         //make fpdi instance
