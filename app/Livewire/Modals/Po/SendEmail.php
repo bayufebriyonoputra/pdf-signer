@@ -3,6 +3,7 @@
 namespace App\Livewire\Modals\Po;
 
 use App\Enum\StatusEnum;
+use App\Jobs\SendMailJob;
 use Livewire\Component;
 use App\Mail\SendPoMail;
 use App\Models\DetailPo;
@@ -51,9 +52,13 @@ class SendEmail extends ModalComponent
 
         $emailSupplier = $this->po->supplier->email;
         $listEmail = explode('|', $emailSupplier);
-        Mail::to($listEmail)
-            ->cc(['purchasing02@sai.co.id', 'deni@sai.co.id'])
-            ->send(new SendPoMail($details));
+        
+        // Mail::to($listEmail)
+        //     ->cc(['purchasing02@sai.co.id', 'deni@sai.co.id'])
+        //     ->send(new SendPoMail($details));
+
+        dispatch(new SendMailJob($details, $listEmail));
+        
         if($this->po->status != StatusEnum::CANCEL && $this->po->status != StatusEnum::REVISE){
             $this->po->update([
                 'status' => StatusEnum::SENDED
