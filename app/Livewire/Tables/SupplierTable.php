@@ -21,6 +21,13 @@ final class SupplierTable extends PowerGridComponent
 {
     use WithExport;
 
+    public function onUpdatedToggleable(string|int $id, string $field, string $value): void
+    {
+        Supplier::query()->find($id)->update([
+            $field => e($value),
+        ]);
+    }
+
     public function setUp(): array
     {
         $this->showCheckBox();
@@ -62,6 +69,7 @@ final class SupplierTable extends PowerGridComponent
             ->add('id')
             ->add('name')
             ->add('email')
+            ->add('is_active')
             ->add('created_at');
     }
 
@@ -74,6 +82,10 @@ final class SupplierTable extends PowerGridComponent
             Column::make('Email', 'email')
                 ->searchable()
                 ->sortable(),
+            Column::add()
+                ->title('Aktif')
+                ->field('is_active')
+                ->toggleable(hasPermission: true, trueLabel: 'Aktif', falseLabel: 'Nonaktif'),
             Column::action('Action')
         ];
     }

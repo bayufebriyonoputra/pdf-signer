@@ -12,7 +12,7 @@ form(PurchaseOrderForm::class);
 state([
     'approverPertama' => User::where('role', RoleEnum::CHECKER)->get(),
     'approverKedua' => User::where('role', RoleEnum::SIGNER)->get(),
-    'suppliers' => Supplier::all(),
+    'suppliers' => Supplier::where('is_active', true)->get(),
 ]);
 
 $save = function () {
@@ -41,7 +41,7 @@ layout('layouts.admin');
 
 <div>
     <div
-        class="p-4 w-full max-w-none bg-white rounded-lg border border-gray-200 shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
+        class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow max-w-none sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
         <form wire:submit="save" class="space-y-6" action="#">
             <h5 class="text-xl font-medium text-gray-900 dark:text-white">Tambahkan Purchase Order</h5>
             <!-- Body Form -->
@@ -141,27 +141,27 @@ layout('layouts.admin');
                     <p class="mb-2 text-sm font-semibold text-gray-800">Jenis Transaksi</p>
                     <div class="flex space-x-3">
                         <div
-                            class="flex items-center w-full max-w-xs rounded border border-gray-200 ps-4 dark:border-gray-700">
+                            class="flex items-center w-full max-w-xs border border-gray-200 rounded ps-4 dark:border-gray-700">
                             <input wire:model="form.jenisTransaksi" id="bordered-radio-1" type="radio"
                                 value="{{ \App\Enum\JenisTransaksiEnum::BARANG->value }}" name="jenisTransaksi"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="bordered-radio-1"
-                                class="py-4 w-full text-sm font-medium text-gray-900 ms-2 dark:text-gray-300">{{ \App\Enum\JenisTransaksiEnum::BARANG->label() }}</label>
+                                class="w-full py-4 text-sm font-medium text-gray-900 ms-2 dark:text-gray-300">{{ \App\Enum\JenisTransaksiEnum::BARANG->label() }}</label>
                         </div>
                         <div
-                            class="flex items-center w-full max-w-xs rounded border border-gray-200 ps-4 dark:border-gray-700">
+                            class="flex items-center w-full max-w-xs border border-gray-200 rounded ps-4 dark:border-gray-700">
                             <input wire:model="form.jenisTransaksi" id="bordered-radio-2" type="radio"
                                 value="{{ \App\Enum\JenisTransaksiEnum::JASA->value }}" name="jenisTransaksi"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="bordered-radio-2"
-                                class="py-4 w-full text-sm font-medium text-gray-900 ms-2 dark:text-gray-300">{{ \App\Enum\JenisTransaksiEnum::JASA->label() }}</label>
+                                class="w-full py-4 text-sm font-medium text-gray-900 ms-2 dark:text-gray-300">{{ \App\Enum\JenisTransaksiEnum::JASA->label() }}</label>
                         </div>
                     </div>
                 </div>
 
                 <!-- Checkbox Revisi -->
                 <div class="flex items-center mb-4">
-                    <input wire:model="form.revised" id="revised" type="checkbox"  class="w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <input wire:model="form.revised" id="revised" type="checkbox"  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="revised" class="text-sm font-medium text-gray-900 ms-2 dark:text-gray-300">Revised?</label>
                 </div>
             </div>
