@@ -15,6 +15,9 @@
     <div class="flex h-screen">
         <x-sidebar.admin />
         <div class="flex-1 p-6 overflow-y-auto">
+            <div class="flex justify-end w-full mb-5 bg-gray-100 rounded-full shadow-lg  h-fit">
+                <livewire:components.notification />
+            </div>
             {{ $slot }}
         </div>
     </div>
