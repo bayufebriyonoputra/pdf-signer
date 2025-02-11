@@ -88,7 +88,7 @@ final class ListPoAdminTable extends PowerGridComponent
             ->add('status')
             ->add('status_label', fn($po) => $po->status->badge())
             ->add('checker', fn($po) => e($po->approverPertama->name ?? 'Skipped'))
-            ->add('signer', fn($po) => e($po->approverKedua->name))
+            ->add('signer', fn($po) => e($po->approverKedua->name ?? '-'))
             ->add('created_at');
     }
 

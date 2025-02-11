@@ -15,6 +15,7 @@
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.0",
         "openspout/openspout": "^4.25",
+        "phpoffice/phpspreadsheet": "^4.0",
         "power-components/livewire-powergrid": "^5.10",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",

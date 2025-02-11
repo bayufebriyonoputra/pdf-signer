@@ -3,20 +3,22 @@
 namespace App\Livewire\Tables;
 
 use App\Models\HeaderPo;
+use Livewire\Attributes\On;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
-use Livewire\Attributes\On;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
-use PowerComponents\LivewirePowerGrid\Exportable;
-use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\Footer;
 use PowerComponents\LivewirePowerGrid\Header;
 use PowerComponents\LivewirePowerGrid\PowerGrid;
+use PowerComponents\LivewirePowerGrid\Exportable;
+use PowerComponents\LivewirePowerGrid\Facades\Rule;
+use PowerComponents\LivewirePowerGrid\Facades\Filter;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
-use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
+use PowerComponents\LivewirePowerGrid\PowerGridComponent;
+use Illuminate\Contracts\Database\Eloquent\Builder as EloquentBuilder;
 
 final class PoTable extends PowerGridComponent
 {
@@ -67,7 +69,7 @@ final class PoTable extends PowerGridComponent
             ->add('supplier_name', fn($po) => e($po->supplier->name))
             ->add('status_label', fn($po) => e($po->status->label()))
             ->add('checker', fn($po) => e($po->approverPertama->name ?? 'Skipped'))
-            ->add('signer', fn($po) => e($po->approverKedua->name))
+            ->add('signer', fn($po) => e($po->approverKedua->name ?? '-'))
             ->add('created_at');
     }
 
@@ -94,7 +96,14 @@ final class PoTable extends PowerGridComponent
 
     public function filters(): array
     {
-        return [];
+        return [
+            Filter::boolean('signer', 'approver_2')
+                ->label('Finished', 'Not Yet')
+                ->builder(function (Builder $query, string $value) {
+                    if ($value == 'true') return $query->WhereNotNull('approver_2');
+                    return $query->WhereNull('approver_2');
+                }),
+        ];
     }
 
     // #[\Livewire\Attributes\On('edit')]
@@ -110,7 +119,11 @@ final class PoTable extends PowerGridComponent
             Button::add('delete')
                 ->slot('<i class="bi bi-trash-fill"></i>')
                 ->class('bg-red-500 hover:bg-red-600 py-2 px-4 text-white rounded-md')
-                ->dispatch('delete', ['id'  => $row->id])
+                ->dispatch('delete', ['id'  => $row->id]),
+            Button::add('fill')
+                ->slot('<i class="bi bi-textarea-resize"></i>')
+                ->class('bg-emerald-500 hover:bg-emerald-600 py-2 px-4 text-white rounded-md')
+                ->openModal('modals.po.fill-detail', ['headerId' => $row->id])
         ];
     }
 
@@ -137,15 +150,15 @@ final class PoTable extends PowerGridComponent
         $this->dispatch('success-notif', message: 'PO berhasil dihapus');
     }
 
-    /*
+    
     public function actionRules($row): array
     {
        return [
-            // Hide button edit for ID 1
-            Rule::button('edit')
-                ->when(fn($row) => $row->id === 1)
+            
+            Rule::button('fill')
+                ->when(fn($row) => $row->approver_2 !== null)
                 ->hide(),
         ];
     }
-    */
+    
 }

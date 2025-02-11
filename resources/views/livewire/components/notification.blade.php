@@ -32,7 +32,7 @@ $deleteAll = function(){
     <div class="p-6">
         <button @click="open = true" class="relative px-4 py-2 text-white bg-blue-600 rounded-lg">
             🔔 Notifikasi
-            <span class="absolute p-2 text-white bg-red-600 rounded-full -left-4 -top-4">{{ $notif }}</span>
+            <span class="absolute px-3 py-1 text-white bg-red-600 rounded-full -left-4 -top-4">{{ $notif }}</span>
         </button>
     </div>
 

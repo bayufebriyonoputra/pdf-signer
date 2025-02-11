@@ -34,6 +34,7 @@ Route::middleware('role:admin,signer,checker')->group(function(){
     Volt::route('/list-po', 'pages.po.list_po');
     Volt::route('/master-supplier', 'pages.admin.master_supplier');
     Volt::route('/po-pending', 'pages.po.po_pending');
+    Volt::route('/po-excel', 'pages.po.import_excel');
 });
 
 Route::middleware('role:user,admin,signer,checker')->group(function(){

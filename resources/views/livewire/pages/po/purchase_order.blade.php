@@ -43,7 +43,8 @@ layout('layouts.admin');
     <div
         class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow max-w-none sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
         <form wire:submit="save" class="space-y-6" action="#">
-            <h5 class="text-xl font-medium text-gray-900 dark:text-white">Tambahkan Purchase Order</h5>
+            <h5 class="mb-5 text-xl font-medium text-gray-900 dark:text-white">Tambahkan Purchase Order</h5>
+            <a wire:navigate href="/po-excel" class="px-4 py-2 mt-4 text-white bg-green-400 rounded-md hover:bg-green-600">Import Excel</a href="/po-excel">
             <!-- Body Form -->
             <div class="grid grid-cols-2 gap-3">
 
@@ -311,6 +312,75 @@ layout('layouts.admin');
                 };
                 fileReader.readAsArrayBuffer(file);
             }
+        });
+    </script>
+
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            //Fungsi untuk event listener saat input chaged oleh modal detail po
+            Livewire.on('upload-revise', (data) => {
+                const uploadRevise = document.getElementById('fileRevise');
+                const btnSubmit = document.getElementById('btnSubmit');
+                const fileRevise = uploadRevise.files[0];
+
+
+                document.getElementById('btnSubmit').disabled = true;
+                document.getElementById('btnSubmit').innerText = "Getting coordinates....";
+
+
+               console.log(data.approverName)
+
+                if (!fileRevise) {
+                    console.error("No file selected.");
+                    return;
+                }
+
+
+                const fileReader = new FileReader();
+                fileReader.onload = function() {
+                    const pdfData = new Uint8Array(this.result);
+
+                    // Load PDF using PDF.js
+                    pdfjsLib.getDocument(pdfData).promise.then(pdf => {
+                        pdf.getPage(1).then(page => {
+                            // Get text and positions
+                            page.getTextContent().then(textContent => {
+                                let foundCoordinates = null;
+
+                                textContent.items.forEach(item => {
+                                    if (item.str.includes(
+                                            data.approverName)) {
+                                        const x = item.transform[4];
+                                        const y = item.transform[5];
+                                        foundCoordinates = {
+                                            x,
+                                            y
+                                        };
+                                        console.log(
+                                            "Text Coordinates: ", x,
+                                            y);
+                                    }
+                                });
+
+                                // Dispatch coordinates to Livewire if found
+                                if (foundCoordinates) {
+                                    Livewire.dispatch('set-revised-cordinat', {
+                                        coor: foundCoordinates
+                                    });
+                                    console.log('found')
+                                } else {
+                                    console.log("Text not found.");
+                                }
+                            });
+                        });
+                    }).catch(err => {
+                        console.error("Error loading PDF: ", err);
+                    });
+                };
+
+                fileReader.readAsArrayBuffer(fileRevise);
+
+            });
         });
     </script>
 </x-slot:script>
