@@ -1,5 +1,6 @@
 <?php
 
+use ValueError;
 use App\Enum\StatusEnum;
 use App\Models\HeaderPo;
 use App\Models\Supplier;
@@ -39,6 +40,9 @@ $save = function () {
         }
         DB::commit();
         $this->dispatch('success-notif', message: 'File berhasil diimport');
+    } catch (ValueError $e) {
+        DB::rollback();
+        $this->dispatch('error-notif', message: 'Terjadi kesalahan ' . $e->getMessage());
     } catch (\Exception $e) {
         DB::rollback();
         $this->dispatch('error-notif', message: 'Terjadi kesalahan ' . $e->getMessage());
@@ -62,18 +66,14 @@ $save = function () {
 
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="file_input">Upload
                         file</label>
-                    <input
-                        wire:model='file'
+                    <input wire:model='file'
                         class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
                         id="file_input" type="file">
                 </div>
             </div>
 
             <!-- Submit  -->
-            <button
-                wire:loading.attr='disabled'
-                wire:loading.class='bg-blue-200 cursor-not-allowed'
-                wire:target="save" 
+            <button wire:loading.attr='disabled' wire:loading.class='bg-blue-200 cursor-not-allowed' wire:target="save"
                 type="submit"
                 class="px-5 py-2.5 mb-2 text-sm font-medium text-center text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 rounded-lg shadow-lg hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 me-2"><i
                     class="bi bi-floppy"></i>&nbsp;Save</button>
