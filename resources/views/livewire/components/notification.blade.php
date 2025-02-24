@@ -65,7 +65,7 @@ $deleteAll = function(){
                 <div class="mt-6 space-y-4">
                     @foreach ($notifList as $n)
                         <div wire:click="read({{ $n->id }})" wire:key="notif-{{ $n->id }}" @class(['p-3  rounded-lg shadow hover:cursor-pointer', 'bg-blue-500 text-white' => !$n->is_read, 'bg-gray-100 text-black' => $n->is_read])>
-                            <p class="text-sm">📩 Email dengan no PO {{ $n->no_po }} gagal dikirim</p>
+                            <p class="text-sm">{{ $n->message }} {{ $n->no_po }}</p>
                             <span @class(['text-xs', 'text-gray-500' => $n->is_read, 'text-gray-200' => !$n->is_read])>{{ \Carbon\Carbon::parse($n->created_at)->locale('id_ID')->diffForHumans() }}</span>
                         </div>
                     @endforeach
