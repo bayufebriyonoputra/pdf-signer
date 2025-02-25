@@ -151,7 +151,7 @@ final class ListPoAdminTable extends PowerGridComponent
             $noPo = HeaderPo::where('id', $c)->with('supplier')->first();
             $filePath = storage_path("app/public/$file->file");
             if (file_exists($filePath)) {
-                $zip->addFile($filePath, $noPo->no_po . '-' . $noPo->supplier->name . '.pdf');
+                $zip->addFile($filePath, str_replace('/', '-', $noPo->no_po) . '-' . $noPo->supplier->name . '.pdf');
             }
         }
 

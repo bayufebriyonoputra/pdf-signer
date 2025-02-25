@@ -2,6 +2,7 @@
 
 use App\Enum\StatusEnum;
 use App\Models\Approver;
+use App\Models\DetailPo;
 use App\Models\HeaderPo;
 use App\Models\Supplier;
 use App\Models\EmailFailed;
@@ -105,6 +106,12 @@ $storeFiles = function () {
             $po->x_coor = $response['coordinates']['x'];
             $po->y_coor = $response['coordinates']['y'];
             $po->save();
+
+            $file = $f->storeAs('img/PO', $f->getClientOriginalName(), 'public');
+            DetailPo::create([
+                'header_id' => $po->id,
+                'file' => $file,
+            ]);
         } else {
             $poNotFound[] = $fileName;
         }

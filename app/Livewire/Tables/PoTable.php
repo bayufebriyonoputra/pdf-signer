@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Tables;
 
+use App\Enum\StatusEnum;
 use App\Models\HeaderPo;
 use Livewire\Attributes\On;
 use Illuminate\Support\Carbon;
@@ -156,7 +157,7 @@ final class PoTable extends PowerGridComponent
        return [
             
             Rule::button('fill')
-                ->when(fn($row) => $row->approver_2 !== null)
+                ->when(fn($row) => $row->approver_2 != null && $row->status != StatusEnum::NEW)
                 ->hide(),
         ];
     }
