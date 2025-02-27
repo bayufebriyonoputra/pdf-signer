@@ -175,7 +175,7 @@ class SignConfirm extends ModalComponent
                 //stamp dyu
                 $pdf->Image($stampPath, $x_mm + 3, $y_mm_tcpdf - 30, 20, 20, 'PNG'); // Sesuaikan posisi dan ukuran
                 //stmap yazaki
-                $pdf->Image(storage_path('app/public/img/stamp-yazaki.png'), $x_mm -10 + 3, $y_mm_tcpdf -20, 40, 10, 'PNG'); // Sesuaikan posisi dan ukuran
+                //$pdf->Image(storage_path('app/public/img/stamp-yazaki.png'), $x_mm -10 + 3, $y_mm_tcpdf -20, 40, 10, 'PNG'); // Sesuaikan posisi dan ukuran
             }
         }
         $this->po->update([
