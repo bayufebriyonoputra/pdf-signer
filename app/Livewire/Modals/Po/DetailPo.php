@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use LivewireUI\Modal\ModalComponent;
 use App\Models\DetailPo as ModelsDetailPo;
 use App\Traits\TrackerTrait;
+use Illuminate\Support\Facades\Storage;
 use Livewire\WithFileUploads;
 
 class DetailPo extends ModalComponent
@@ -69,6 +70,12 @@ class DetailPo extends ModalComponent
     public function setCordinat($coor){
         $this->x_cordinat = $coor['x'];
         $this->y_cordinat = $coor['y'];
+    }
+
+    public function deleteFile($id){
+        $detail = ModelsDetailPo::find($id);
+        Storage::disk('public')->delete($detail->file);
+        $detail->delete();
     }
 
     public function revisePo(){

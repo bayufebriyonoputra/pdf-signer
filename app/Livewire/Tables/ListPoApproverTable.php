@@ -46,24 +46,37 @@ final class ListPoApproverTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
+        $query = HeaderPo::query()
+            ->selectRaw("
+            header_pos.*,
+
+            CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(REPLACE(no_po, '-', ' '), '/', ' '), ' ', 2), ' ', -1) AS UNSIGNED) AS no_po_number,
+
+            FIELD(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(REPLACE(no_po, '-', ' '), '/', ' '), ' ', -2), ' ', 1),
+                'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII') AS no_po_month,
+
+            CAST(SUBSTRING_INDEX(REPLACE(REPLACE(no_po, '-', ' '), '/', ' '), ' ', -1) AS UNSIGNED) AS no_po_year
+        ")
+            ->with(['approverPertama', 'approverKedua', 'supplier']);
+
         if (auth()->user()->role === RoleEnum::CHECKER) {
-            return HeaderPo::query()->with(['approverPertama', 'approverKedua'])
-                ->where('approver_1', auth()->user()->id)
-                ->where('status', StatusEnum::NEW)
-                ->orderByDesc('created_at');
+            $query->where('approver_1', auth()->user()->id)
+                ->where('status', StatusEnum::NEW);
         } elseif (auth()->user()->role === RoleEnum::SIGNER) {
-            return HeaderPo::query()->with(['approverPertama', 'approverKedua'])
-                ->where(function ($q) {
-                    $q->where('approver_2', auth()->user()->id)
-                        ->where('status', StatusEnum::CHECKED);
-                })
-                ->orWhere(function ($q) {
-                    $q->whereNull('approver_1')
-                        ->where('approver_2', auth()->user()->id)
-                        ->where('status', StatusEnum::NEW)
-                        ->orWhere('status', StatusEnum::REVISE);
-                })->orderByDesc('created_at');
+            $query->where(function ($q) {
+                $q->where('approver_2', auth()->user()->id)
+                    ->where('status', StatusEnum::CHECKED);
+            })->orWhere(function ($q) {
+                $q->whereNull('approver_1')
+                    ->where('approver_2', auth()->user()->id)
+                    ->where(function ($q2) {
+                        $q2->where('status', StatusEnum::NEW)
+                            ->orWhere('status', StatusEnum::REVISE);
+                    });
+            });
         }
+
+        return $query->orderByRaw('no_po_year DESC, no_po_month DESC, no_po_number DESC');
     }
 
     public function relationSearch(): array
@@ -143,7 +156,7 @@ final class ListPoApproverTable extends PowerGridComponent
             // Hide button cehck for role not checker and status not revise and new
             Rule::button('check')
                 ->when(function ($data) {
-                     if (auth()->user()->role === RoleEnum::CHECKER && ($data->status === StatusEnum::NEW || $data->status === StatusEnum::REVISE)) {
+                    if (auth()->user()->role === RoleEnum::CHECKER && ($data->status === StatusEnum::NEW || $data->status === StatusEnum::REVISE)) {
                         return false;
                     }
 
@@ -154,9 +167,9 @@ final class ListPoApproverTable extends PowerGridComponent
             Rule::button('sign')
                 ->when(function ($data) {
 
-                     if (auth()->user()->role === RoleEnum::SIGNER && ($data->status === StatusEnum::CHECKED)) {
+                    if (auth()->user()->role === RoleEnum::SIGNER && ($data->status === StatusEnum::CHECKED)) {
                         return false;
-                    }elseif(auth()->user()->role === RoleEnum::SIGNER && $data->approver_1 === null && ($data->status === StatusEnum::NEW || $data->status === StatusEnum::REVISE)){
+                    } elseif (auth()->user()->role === RoleEnum::SIGNER && $data->approver_1 === null && ($data->status === StatusEnum::NEW || $data->status === StatusEnum::REVISE)) {
                         return false;
                     }
 
@@ -280,7 +293,7 @@ final class ListPoApproverTable extends PowerGridComponent
                 //stamp dyu
                 $pdf->Image($stampPath, $x_mm + 3, $y_mm_tcpdf - 30, 20, 20, 'PNG'); // Sesuaikan posisi dan ukuran
                 //stmap yazaki
-                $pdf->Image(storage_path('app/public/img/stamp-yazaki.png'), $x_mm -10 + 3, $y_mm_tcpdf -20, 40, 10, 'PNG'); // Sesuaikan posisi dan ukuran
+                $pdf->Image(storage_path('app/public/img/stamp-yazaki.png'), $x_mm - 10 + 3, $y_mm_tcpdf - 20, 40, 10, 'PNG'); // Sesuaikan posisi dan ukuran
             }
         }
         $po->update([

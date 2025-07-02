@@ -22,6 +22,7 @@ $save = function ($version) {
     $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load(storage_path("app/{$path}"));
 
     $data = $spreadsheet->getActiveSheet()->removeRow(1, 3)->toArray();
+    // dd($data);
 
     DB::beginTransaction();
     try {
@@ -67,6 +68,7 @@ $save = function ($version) {
                     'approver_2' => $approver2->user_id,
                 ];
                 HeaderPo::create($data);
+                usleep(500000);
             }
         }
         DB::commit();
@@ -209,9 +211,9 @@ $storeFiles = function () {
                 type="submit"
                 class="px-5 py-2.5 mb-2 text-sm font-medium text-center text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 rounded-lg shadow-lg hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 me-2"><i
                     class="bi bi-floppy"></i>
-                    <span wire:loading.remove wire:target='storeFiles' class="ms-2">Save</span>
-                    <span wire:loading wire:target='storeFiles' class="ms-2 hover:cursor-not-allowed">Loading...</span>
-                </button>
+                <span wire:loading.remove wire:target='storeFiles' class="ms-2">Save</span>
+                <span wire:loading wire:target='storeFiles' class="ms-2 hover:cursor-not-allowed">Loading...</span>
+            </button>
         </form>
     </div>
 

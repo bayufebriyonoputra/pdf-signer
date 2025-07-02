@@ -47,7 +47,19 @@ final class PoTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return HeaderPo::query()->with(['approverPertama', 'approverKedua', 'supplier'])->orderByDesc('created_at');
+        return HeaderPo::query()
+            ->selectRaw("
+            header_pos.*,
+
+            CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(REPLACE(no_po, '-', ' '), '/', ' '), ' ', 2), ' ', -1) AS UNSIGNED) AS no_po_number,
+
+            FIELD(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(REPLACE(no_po, '-', ' '), '/', ' '), ' ', -2), ' ', 1),
+                'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII') AS no_po_month,
+
+            CAST(SUBSTRING_INDEX(REPLACE(REPLACE(no_po, '-', ' '), '/', ' '), ' ', -1) AS UNSIGNED) AS no_po_year
+        ")
+            ->with(['approverPertama', 'approverKedua', 'supplier'])
+            ->orderByRaw('no_po_year DESC, no_po_month DESC, no_po_number DESC');
     }
 
     public function relationSearch(): array
@@ -124,7 +136,11 @@ final class PoTable extends PowerGridComponent
             Button::add('fill')
                 ->slot('<i class="bi bi-textarea-resize"></i>')
                 ->class('bg-emerald-500 hover:bg-emerald-600 py-2 px-4 text-white rounded-md')
-                ->openModal('modals.po.fill-detail', ['headerId' => $row->id])
+                ->openModal('modals.po.fill-detail', ['headerId' => $row->id]),
+            Button::add('edit')
+                ->slot('<i class="bi bi-pencil-square"></i>')
+                ->class('bg-amber-500 hover:bg-amber-600 py-2 px-4 text-white rounded-md')
+                ->openModal('modals.po.edit-po', ['headerId' => $row->id]),
         ];
     }
 
@@ -151,15 +167,15 @@ final class PoTable extends PowerGridComponent
         $this->dispatch('success-notif', message: 'PO berhasil dihapus');
     }
 
-    
+
     public function actionRules($row): array
     {
        return [
-            
+
             Rule::button('fill')
                 ->when(fn($row) => $row->approver_2 != null && $row->status != StatusEnum::NEW)
                 ->hide(),
         ];
     }
-    
+
 }

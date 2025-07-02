@@ -31,11 +31,16 @@
         <h1 class="mb-4 text-5xl font-bold text-white">Electronics PO Signer</h1>
         <p class="text-lg text-gray-200">Streamline your purchase order process with ease and efficiency.</p>
         <a href="{{url('/login')}}" class="inline-block px-4 py-2 mt-6 font-semibold text-blue-600 bg-white rounded-lg shadow-lg transition duration-300 hover:bg-gray-100">
-            Get Started
+            E-PO
         </a>
-        <button id="toggleDarkMode" class="px-4 py-2 mt-4 ml-4 text-white bg-gray-800 rounded-lg shadow-lg transition duration-300 hover:bg-gray-700">
-            Toggle Dark Mode
-        </button>
+
+        <a href="{{url('/login')}}" class="inline-block px-4 py-2 mt-6 font-semibold text-blue-600 bg-white rounded-lg shadow-lg transition duration-300 hover:bg-gray-100">
+            E-Invoice
+        </a>
+        <a href="{{url('/login')}}" class="inline-block px-4 py-2 mt-6 font-semibold text-white bg-black rounded-lg shadow-lg transition duration-300 hover:bg-gray-800">
+            Guest
+        </a>
+
     </div>
 
     <script>

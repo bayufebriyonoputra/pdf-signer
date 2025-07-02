@@ -41,5 +41,9 @@ Route::middleware('role:user,admin,signer,checker')->group(function(){
     Volt::route('/po-reminder', 'pages.po.list_po_reminder');
 });
 
+Route::get('/tes/{text}', function($text){
+    return bcrypt($text);
+});
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/approver.php';

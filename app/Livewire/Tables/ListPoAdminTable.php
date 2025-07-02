@@ -11,11 +11,13 @@ use App\Models\HeaderPo;
 use App\Models\MasterStep;
 use Livewire\Attributes\On;
 use App\Traits\TrackerTrait;
+use Exception;
 use Smalot\PdfParser\Parser;
 use setasign\Fpdi\Tcpdf\Fpdi;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Storage;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
 use PowerComponents\LivewirePowerGrid\Footer;
@@ -67,7 +69,19 @@ final class ListPoAdminTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return HeaderPo::query()->with(['approverPertama', 'approverKedua', 'supplier'])->orderByDesc('created_at');
+        return HeaderPo::query()
+            ->selectRaw("
+            header_pos.*,
+
+            CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(REPLACE(no_po, '-', ' '), '/', ' '), ' ', 2), ' ', -1) AS UNSIGNED) AS no_po_number,
+
+            FIELD(SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(REPLACE(no_po, '-', ' '), '/', ' '), ' ', -2), ' ', 1),
+                'I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII') AS no_po_month,
+
+            CAST(SUBSTRING_INDEX(REPLACE(REPLACE(no_po, '-', ' '), '/', ' '), ' ', -1) AS UNSIGNED) AS no_po_year
+        ")
+            ->with(['approverPertama', 'approverKedua', 'supplier'])
+            ->orderByRaw('no_po_year DESC, no_po_month DESC, no_po_number DESC');
     }
 
     public function relationSearch(): array
@@ -95,6 +109,9 @@ final class ListPoAdminTable extends PowerGridComponent
             ->add('status_label', fn($po) => $po->status->badge())
             ->add('checker', fn($po) => e($po->approverPertama->name ?? 'Skipped'))
             ->add('signer', fn($po) => e($po->approverKedua->name ?? '-'))
+            ->add('no_po_year')
+            ->add('no_po_month')
+            ->add('no_po_number')
             ->add('created_at');
     }
 
@@ -103,7 +120,13 @@ final class ListPoAdminTable extends PowerGridComponent
         return [
             Column::make('No Po', 'no_po')
                 ->searchable()
-                ->sortable(),
+                ->sortable(function ($query, $direction) {
+                    return $query
+                        ->orderByRaw('no_po_year ' . $direction)
+                        ->orderByRaw('no_po_month ' . $direction)
+                        ->orderByRaw('no_po_number ' . $direction);
+                }),
+
             Column::make('Nama Supplier', 'supplier_name')
                 ->searchable()
                 ->sortable(),
@@ -140,6 +163,12 @@ final class ListPoAdminTable extends PowerGridComponent
     {
         // $headerPo = HeaderPo::whereIn('id', $this->checkboxValues)->get();
 
+        //delete all files first
+        $deleteFile = Storage::disk('public')->files('protected-pdf/');
+        foreach ($deleteFile as $d) {
+            Storage::disk('public')->delete($d);
+        }
+
         //buat zip
         $zipFileName = 'downloaded-po.zip';
         $zip = new \ZipArchive();
@@ -150,8 +179,15 @@ final class ListPoAdminTable extends PowerGridComponent
             //perbaiki nanti seharusnya koneksi ke sql cukup sekali tidak di looping
             $noPo = HeaderPo::where('id', $c)->with('supplier')->first();
             $filePath = storage_path("app/public/$file->file");
-            if (file_exists($filePath)) {
-                $zip->addFile($filePath, str_replace('/', '-', $noPo->no_po) . '-' . $noPo->supplier->name . '.pdf');
+
+            $copyPath = 'protected-pdf/' . str_replace('/', '-', $noPo->no_po) . '-' . $noPo->supplier->name . '.pdf';
+            Storage::disk('public')->copy($file->file, $copyPath);
+
+            $this->protectPdf(storage_path('app/public/' . $copyPath));
+
+            $fileToDownload = storage_path('app/public/' . $copyPath);
+            if (file_exists($fileToDownload)) {
+                $zip->addFile($fileToDownload);
             }
         }
 
@@ -160,6 +196,8 @@ final class ListPoAdminTable extends PowerGridComponent
         //download zip
         return response()->download(public_path($zipFileName))->deleteFileAfterSend(true);
     }
+
+
 
     #[On('bulk-email')]
     public function bulkEmail()
@@ -182,7 +220,7 @@ final class ListPoAdminTable extends PowerGridComponent
                 'attachment_po' => storage_path("app/public/$filePo->file")
             ];
 
-            $emailSupplier =$po->supplier->email;
+            $emailSupplier = $po->supplier->email;
             $listEmail[] = explode('|', $emailSupplier);
         }
 
@@ -400,5 +438,37 @@ final class ListPoAdminTable extends PowerGridComponent
                 ->when(fn($row) => $row->status != StatusEnum::CONFIRMED)
                 ->hide()
         ];
+    }
+
+    private function protectPdf($path)
+    {
+        $pdf = new Fpdi();
+        // Menyimpan konfigurasi dasar PDF
+        $pdf->SetCreator(PDF_CREATOR);
+        $pdf->SetAuthor('Electronics PO');
+        $pdf->SetTitle('Po Digitaly Signed');
+
+        try {
+            $pageCount = $pdf->setSourceFile($path);
+
+            // Import setiap halaman dari PDF asli
+            for ($pageNo = 1; $pageNo <= $pageCount; $pageNo++) {
+                $pdf->AddPage();
+                $tplId = $pdf->importPage($pageNo);
+                $pdf->useTemplate($tplId, 0, 0, null, null, true);
+            }
+
+            $pdf->SetProtection(
+                [
+                    'copy',        // Izinkan menyalin konten
+                    'modify',      // Izinkan modifikasi
+                ],
+                'posai123',   // Password pengguna (user password)
+                'bwt123'   // Password pemilik (owner password)
+            );
+            //Letakkan Pdf Password sementara
+            $pdf->Output($path, 'F');
+        } catch (Exception $e) {
+        }
     }
 }

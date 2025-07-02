@@ -15,8 +15,11 @@
                 <!-- Detail -->
                 <div class="flex-1">
                     <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-gray-800">Diupload : {{ \Carbon\Carbon::parse($file->created_at)->locale('id')->isoFormat('DD MMM YYYY hh:MM:ss') }}</span>
-                        <a href="{{asset("storage/$file->file")}}" target="_blank" type="button" class="self-start px-4 py-2 text-white bg-blue-500 rounded-md w-max hover:bg-blue-700"><i class="bi bi-eye-fill"></i></a>
+                        <span class="text-sm font-medium text-gray-800">{{ \Carbon\Carbon::parse($file->created_at)->locale('id')->isoFormat('DD MMM YYYY hh:MM:ss') }}</span>
+                        <div>
+                            <a href="{{asset("storage/$file->file")}}" target="_blank" type="button" class="self-start px-4 py-2 text-white bg-blue-500 rounded-md w-max hover:bg-blue-700"><i class="bi bi-eye-fill"></i></a>
+                            <span wire:click="deleteFile({{ $file->id }})" type="button" class="self-start px-4 py-2 text-white bg-red-500 rounded-md w-max hover:bg-red-700"><i class="bi bi-trash-fill"></i></span>
+                        </div>
                     </div>
                 </div>
             </div>

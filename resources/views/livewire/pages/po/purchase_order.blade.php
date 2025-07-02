@@ -44,7 +44,7 @@ layout('layouts.admin');
         class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow max-w-none sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
         <form wire:submit="save" class="space-y-6" action="#">
             <h5 class="mb-5 text-xl font-medium text-gray-900 dark:text-white">Tambahkan Purchase Order</h5>
-            <a wire:navigate href="/po-excel" class="px-4 py-2 mt-4 text-white bg-green-400 rounded-md hover:bg-green-600">Import Excel</a href="/po-excel">
+            <a wire:navigate href="/po-excel" class="px-4 py-2 mt-4 text-white bg-green-400 rounded-md hover:bg-green-600">Import Data</a href="/po-excel">
            
             <!-- Body Form -->
             <div class="grid grid-cols-2 gap-3">
