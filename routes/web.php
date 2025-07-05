@@ -47,3 +47,4 @@ Route::get('/tes/{text}', function($text){
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/approver.php';
+require __DIR__ . '/invoice.php';
