@@ -30,6 +30,17 @@
                         @enderror
                     </div>
 
+                     {{-- Email --}}
+                    <div>
+                        <label for="email" class="block mb-2 text-sm font-medium text-gray-">Email</label>
+                        <input wire:model='email' type="email" id="email"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                            placeholder="Email Vendor" required />
+                        @error('email')
+                            <p class="text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                 </div>
 
                 <button type="submit"
@@ -82,6 +93,11 @@
                                 <span>TOP</span>
                             </div>
                         </th>
+                        <th class="px-4 py-3 text-left font-semibold">
+                            <div class="flex flex-col leading-tight">
+                                <span>Email</span>
+                            </div>
+                        </th>
 
                         <th class="px-4 py-3 text-left font-semibold">Action</th>
                     </tr>
@@ -92,6 +108,7 @@
                             <td class="px-6 py-4">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">{{ $vendor->name ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $vendor->top }} DAYS</td>
+                            <td class="px-6 py-4">{{ $vendor->email }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex gap-2">
                                     <button wire:click='setEdit({{ $vendor->id }})'

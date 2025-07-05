@@ -22,6 +22,7 @@ class MasterVendor extends Component
     public $isEdit = false;
     public $name = "";
     public $top;
+    public $email= '';
     public $search = "";
 
     public function render()
@@ -39,7 +40,8 @@ class MasterVendor extends Component
         if (!$this->isEdit) {
             Vendor::create([
                 'name' => $this->name,
-                'top' => $this->top
+                'top' => $this->top,
+                'email' => $this->email
             ]);
             $this->resetField();
             $this->dispatch('success-notif', message: 'Berhasil menambahkan data');
@@ -47,7 +49,8 @@ class MasterVendor extends Component
             Vendor::find($this->vendorId)
                 ->update([
                     'name' => $this->name,
-                    'top' => $this->top
+                    'top' => $this->top,
+                    'email' => $this->email
                 ]);
             $this->resetField();
             $this->dispatch('success-notif', message: 'Berhasil mengedit data');
@@ -61,6 +64,7 @@ class MasterVendor extends Component
         $this->vendorId = $vendor->id;
         $this->name = $vendor->name;
         $this->top = $vendor->top;
+        $this->email = $vendor->email;
     }
 
     public function destroy($id)
@@ -88,19 +92,26 @@ class MasterVendor extends Component
             'top' => [
                 'required',
                 'numeric'
+            ],
+            'email' => [
+                'required',
+                'email'
             ]
         ];
 
         if ($this->isEdit && $this->vendorId) {
             $rules['name'][] = Rule::unique('vendors', 'name')->ignore($this->vendorId);
+            $rules['email'][] = Rule::unique('vendors', 'email')->ignore($this->vendorId);
         } else {
             $rules['name'][] = 'unique:vendors,name';
+            $rules['email'][] = 'unique:vendors,email';
         }
         return $rules;
     }
 
     protected $messages = [
         'name.required' => 'Nama wajib diisi',
-        'name.unique' => 'Nama sudah digunakan'
+        'name.unique' => 'Nama sudah digunakan',
+        'email.unique' => 'Email sudah digunakan'
     ];
 }

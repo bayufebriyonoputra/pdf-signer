@@ -41,7 +41,7 @@ class MasterInvoice extends Component
     public function render()
     {
         return view('livewire.invoice.master-invoice', [
-            'invoices' => ModelsMasterInvoice::paginate(10)
+            'invoices' => ModelsMasterInvoice::latest()->paginate(10)
         ]);
     }
 

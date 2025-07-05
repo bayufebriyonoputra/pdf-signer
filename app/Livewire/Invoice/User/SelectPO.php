@@ -46,23 +46,28 @@ class SelectPO extends Component
         ]);
     }
 
-    public function confirm() {
-        if(!$this->ids){
-            $this->dispatch('error-notif', message:"Minimal satu po harus dipilih");
+    public function confirm()
+    {
+        if (!$this->ids) {
+            $this->dispatch('error-notif', message: "Minimal satu po harus dipilih");
             return;
         }
+
+        $selectedVendor = Vendor::find($this->vendorId);
+
+        $tglPayment = calculateWednesdayDate(now(), $selectedVendor->top);
+
 
         MasterInvoice::whereIn('id', $this->ids)
             ->update([
                 'tgl_invoice' => now(),
-                'pic_perusahaan' => $this->pic
+                'pic_perusahaan' => $this->pic,
+                'tgl_pembayaran' => $tglPayment
             ]);
 
-        $this->dispatch('success-notif', message:'Berhasil confirm');
+        $this->dispatch('success-notif', message: 'Berhasil confirm');
         $this->ids = [];
         $this->vendorId = null;
         $this->dispatch('clearChoices');
-
-
     }
 }
