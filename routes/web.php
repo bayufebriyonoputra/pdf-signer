@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\MasterInvoice;
 use Illuminate\Support\Facades\Route;
 use Livewire\Volt\Volt;
 
@@ -24,7 +25,7 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Route::middleware('role:admin,signer,checker')->group(function(){
+Route::middleware('role:admin,signer,checker')->group(function () {
     Volt::route('/dashboard', 'pages.admin.dashboard');
     Volt::route('/master-approver', 'pages.admin.master_approver');
     Volt::route('/master-user', 'pages.admin.master_user');
@@ -37,12 +38,20 @@ Route::middleware('role:admin,signer,checker')->group(function(){
     Volt::route('/po-excel', 'pages.po.import_excel');
 });
 
-Route::middleware('role:user,admin,signer,checker')->group(function(){
+Route::middleware('role:user,admin,signer,checker')->group(function () {
     Volt::route('/po-reminder', 'pages.po.list_po_reminder');
 });
 
-Route::get('/tes/{text}', function($text){
+Route::get('/tes/{text}', function ($text) {
     return bcrypt($text);
+});
+
+Route::get('/tes-pdf', function () {
+    $invoice = MasterInvoice::whereIn('id', [4, 5])->with('vendor')->get();
+    // dd($invoice);
+    return view('pdf-template.invoice-tt', [
+        'data' => $invoice
+    ]);
 });
 
 require __DIR__ . '/auth.php';

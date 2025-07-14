@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "barryvdh/laravel-dompdf": "^3.1",
         "endroid/qr-code": "^5.0",
         "guzzlehttp/guzzle": "^7.2",
         "jantinnerezo/livewire-alert": "^3.0",
@@ -41,7 +42,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files":[
-             "app/Helpers/DateHelper.php"
+             "app/Helpers/DateHelper.php",
+             "app/Helpers/Format.php"
         ]
     },
     "autoload-dev": {

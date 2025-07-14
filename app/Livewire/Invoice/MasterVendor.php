@@ -29,7 +29,9 @@ class MasterVendor extends Component
     {
         return view('livewire.invoice.master-vendor', [
             'vendors' => Vendor::where('name', 'like', "%$this->search%")
-                ->orWhere('top', 'like', "%$this->search%")->paginate(10)
+                ->orWhere('top', 'like', "%$this->search%")
+                ->latest()
+                ->paginate(10)
         ]);
     }
 

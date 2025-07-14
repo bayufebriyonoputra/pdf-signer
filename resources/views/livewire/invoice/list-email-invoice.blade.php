@@ -17,7 +17,7 @@
     {{-- Action --}}
     <div class="flex gap-2">
         <div class="flex gap-2">
-            <button class="bg-sky-400 hover:bg-sky-500 rounded-md px-4 py-2 text-white"><i
+            <button wire:target='batchSend' wire:loading.attr='disabled' wire:click='batchSend' class="bg-sky-400 hover:bg-sky-500 rounded-md px-4 py-2 text-white"><i
                     class="bi bi-send me-4"></i>Send Email</button>
         </div>
     </div>
@@ -29,6 +29,7 @@
                 <thead class="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
                     <tr>
                         <th class="px-4 py-3 text-left font-semibold">#</th>
+                        <th class="px-4 py-3 text-left font-semibold">✅</th>
                         <th class="px-4 py-3 text-left font-semibold">
                             <div class="flex flex-col leading-tight">
                                 <span>Vendor</span>
@@ -73,6 +74,10 @@
                     @foreach ($invoices as $inv)
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4">{{ $loop->iteration }}</td>
+                            <td class="px-6 py-4">
+                                <input type="checkbox" wire:model.live='ids'  value="{{ $inv->id }}"
+                                        class="accent-blue-600" />
+                            </td>
                             <td class="px-6 py-4">{{ $inv->vendor->name ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $inv->no_po }}</td>
                             <td class="px-6 py-4">{{ $inv->no_invoice ?? '-' }}</td>
