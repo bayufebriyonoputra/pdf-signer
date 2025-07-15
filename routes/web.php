@@ -1,8 +1,9 @@
 <?php
 
+use App\Models\Setting;
+use Livewire\Volt\Volt;
 use App\Models\MasterInvoice;
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,10 +48,41 @@ Route::get('/tes/{text}', function ($text) {
 });
 
 Route::get('/tes-pdf', function () {
-    $invoice = MasterInvoice::whereIn('id', [4, 5])->with('vendor')->get();
-    // dd($invoice);
+    $invoices = MasterInvoice::whereIn('id', [1])
+        ->with('vendor')
+        ->get();
+
+    $countVendors = $invoices->pluck('vendor.id')->unique();
+
+    // jika hanya ada satu jenis vendor maka kirim
+
+    $invoiceCounter = Setting::where('name', 'invoice_counter')->first();
+
+    $noRecords = '';
+
+    if (now()->day === 1 && $invoiceCounter->value != 1) {
+        // $noUrut = 001;
+        $bulan = toRoman(now()->month);
+        $tahun = now()->isoFormat("YY");
+        $noVP = "REC-001/PUR-SAI/$bulan/$tahun";
+
+        $noRecords = $noVP;
+        $invoiceCounter->value = "1";
+        $invoiceCounter->save();
+    } else {
+        $count = intval($invoiceCounter->value);
+        $noUrut = str_pad($count, 3, '0', STR_PAD_LEFT);
+        $bulan = toRoman(now()->month);
+        $tahun = now()->isoFormat("YY");
+        $noRecords = "REC-$noUrut/PUR-SAI/$bulan/$tahun";
+
+        $invoiceCounter->value = strval($count + 1);
+        $invoiceCounter->save();
+    }
+
     return view('pdf-template.invoice-tt', [
-        'data' => $invoice
+        'data' => $invoices,
+        'noRecord' => $noRecords
     ]);
 });
 

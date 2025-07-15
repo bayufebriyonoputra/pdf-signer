@@ -8,6 +8,7 @@ use Livewire\Component;
 use App\Models\DetailPo;
 use App\Models\HeaderPo;
 use App\Models\Supplier;
+use App\Traits\TrackerTrait;
 use Livewire\Attributes\On;
 use Livewire\WithFileUploads;
 use LivewireUI\Modal\ModalComponent;
@@ -16,6 +17,8 @@ class EditPo extends ModalComponent
 {
 
     use WithFileUploads;
+    use TrackerTrait;
+
 
     public $headerId;
     public $x_cordinat;
@@ -25,6 +28,8 @@ class EditPo extends ModalComponent
     public $approver_1;
     public $signerName;
     public $supplierId;
+
+    public $stats;
 
     public function mount($headerId)
     {
@@ -81,5 +86,20 @@ class EditPo extends ModalComponent
             'signer' => User::where('role', RoleEnum::SIGNER)->get(),
             'checker' => User::where('role', RoleEnum::CHECKER)->get()
         ]);
+    }
+
+    public function changeStats(){
+        $header = HeaderPo::find($this->headerId);
+        $header->status = $this->stats;
+        $header->save();
+        $this->addTrack(
+            $header->no_po,
+            'Manual Change',
+            "Status diubah manual ke $this->stats"
+        );
+
+        $this->dispatch('success-notif', message: 'Berhsil Mengubah Status');
+        $this->dispatch('pg:eventRefresh-default');
+        $this->closeModal();
     }
 }

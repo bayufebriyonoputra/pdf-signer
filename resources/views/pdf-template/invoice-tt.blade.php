@@ -135,8 +135,11 @@
                 <strong>PT. SURABAYA AUTOCOMP INDONESIA</strong><br>
                 <em>Wiring Harness Manufacturer</em>
             </td>
-            <td align="right">
-                <p style="padding: 4px 2px" class="confidential">CONFIDENTIAL</p style="padding: 4px 2px">
+            <td style="text-align: right;">
+                <p
+                    style="color: red; border: 2px solid red; text-align: center; padding: 10px 20px; width: 80px; margin-left: auto;">
+                    CONFIDENTIAL
+                </p>
             </td>
         </tr>
     </table>
@@ -172,7 +175,7 @@
             </tr>
         @endforeach
         <tr class="total-row">
-            <td colspan="3" align="right">TOTAL :</td>
+            <td colspan="3" style="text-align: left; padding-left: 10px;">TOTAL :</td>
             <td align="right">{{ rupiah($data->sum('total')) }}</td>
         </tr>
         <tr>
@@ -193,7 +196,7 @@
             <td align="right">
                 Ngoro, {{ \Carbon\Carbon::now()->isoFormat('DD-MMM-YY') }}<br><br>
                 Received by : <strong>RISA PURCHASING</strong><br><br>
-                <img src="{{ public_path('template-pdf/signature.png') }}" class="signature-img"><br>
+                <img src="{{ public_path('img/vp-signature.png') }}" class="signature-img"><br>
                 <strong>PT. SURABAYA AUTOCOMP INDONESIA</strong>
             </td>
         </tr>
