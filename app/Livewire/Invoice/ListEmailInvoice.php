@@ -15,6 +15,7 @@ class ListEmailInvoice extends Component
 {
 
     public $ids = [];
+    public $customMessage = '';
 
     public function render()
     {
@@ -68,9 +69,14 @@ class ListEmailInvoice extends Component
             $filePath = public_path('temp/tanda-terima-invoice.pdf');
             $pdf->save($filePath);
 
-            Mail::to($invoices->first()->vendor->email)
+            $listEmails = explode('|', $invoices->first()->vendor->email);
+            $data = [
+                'custom_message' => $this->customMessage
+            ];
+
+            Mail::to($listEmails)
                 ->cc(['purchasing01@sai.co.id'])
-                ->send(new SendInvoiceMail());
+                ->send(new SendInvoiceMail($data));
 
             MasterInvoice::whereIn('id', $this->ids)
                 ->update([

@@ -14,11 +14,8 @@
 
         <div style="border-left: 4px solid #dc2626; padding-left: 16px; margin: 24px 0; background-color: #fef2f2; padding: 12px 16px;">
           <p style="margin: 0; color: #dc2626; font-style: italic; font-size: 15px;">
-            <strong>Segera Lakukan Penagihan maksimal H+2</strong> setelah Pengiriman Barang / Jasa.
-            <br />
-            <strong>Batas penerimaan dokumen Tagihan maksimal tanggal:</strong>
-            <span style="color: #b91c1c; font-weight: bold;">20 JUNI 2025</span><br />
-            untuk proses Tagihan di Bulan <strong style="text-decoration: underline;">JUNI 2025</strong>.
+            <strong>{{ $details['custom_message'] }}</strong>
+
           </p>
         </div>
 

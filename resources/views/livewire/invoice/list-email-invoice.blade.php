@@ -15,12 +15,16 @@
     </div>
 
     {{-- Action --}}
-    <div class="flex gap-2">
+
         <div class="flex gap-2">
-            <button wire:target='batchSend' wire:loading.attr='disabled' wire:click='batchSend' class="bg-sky-400 hover:bg-sky-500 rounded-md px-4 py-2 text-white"><i
-                    class="bi bi-send me-4"></i>Send Email</button>
+            <input wire:model='customMessage' type="text" id="name"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                placeholder="Custom Message" />
+            <button wire:target='batchSend' wire:loading.attr='disabled' wire:click='batchSend'
+                class="bg-sky-400 max-w-[200px] w-full hover:bg-sky-500 rounded-md px-4 py-2 text-white"><i class="bi bi-send me-4"></i>Send
+                Email</button>
         </div>
-    </div>
+
 
 
     <div class="max-w-6xl mx-auto px-4 py-8">
@@ -75,8 +79,8 @@
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">
-                                <input type="checkbox" wire:model.live='ids'  value="{{ $inv->id }}"
-                                        class="accent-blue-600" />
+                                <input type="checkbox" wire:model.live='ids' value="{{ $inv->id }}"
+                                    class="accent-blue-600" />
                             </td>
                             <td class="px-6 py-4">{{ $inv->vendor->name ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $inv->no_po }}</td>

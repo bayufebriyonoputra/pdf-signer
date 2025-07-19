@@ -7,6 +7,7 @@ use App\Models\DetailPo;
 use App\Models\HeaderPo;
 use App\Models\MasterInvoice;
 use setasign\Fpdi\Tcpdf\Fpdi;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
@@ -255,6 +256,49 @@ Route::get('/tes-pdf', function () {
             // Lanjutkan ke iterasi berikutnya
             continue;
         }
+    }
+});
+
+Route::get('/tes-invoice', function () {
+    $invoices = MasterInvoice::whereIn('id', ['23'])
+        ->with('vendor')
+        ->get();
+
+    $countVendors = $invoices->pluck('vendor.id')->unique();
+
+    // jika hanya ada satu jenis vendor maka kirim
+    if ($countVendors->count() === 1) {
+
+        $invoiceCounter = Setting::where('name', 'invoice_counter')->first();
+
+        $noRecords = '';
+
+        if (now()->day === 1 && $invoiceCounter->value != 1) {
+            // $noUrut = 001;
+            $bulan = toRoman(now()->month);
+            $tahun = now()->isoFormat("YY");
+            $noVP = "REC-001/PUR-SAI/$bulan/$tahun";
+
+            $noRecords = $noVP;
+            $invoiceCounter->value = "1";
+            $invoiceCounter->save();
+        } else {
+            $count = intval($invoiceCounter->value);
+            $noUrut = str_pad($count, 3, '0', STR_PAD_LEFT);
+            $bulan = toRoman(now()->month);
+            $tahun = now()->isoFormat("YY");
+            $noRecords = "REC-$noUrut/PUR-SAI/$bulan/$tahun";
+
+            $invoiceCounter->value = strval($count + 1);
+            $invoiceCounter->save();
+        }
+
+        $pdf = Pdf::loadView('pdf-template.invoice-tt', [
+            'data' => $invoices,
+            'noRecord' => $noRecords
+        ]);
+        $filePath = public_path('temp/tanda-terima-invoice.pdf');
+        $pdf->save($filePath);
     }
 });
 

@@ -24,7 +24,7 @@
 
         .header-logo {
             font-weight: bold;
-            font-size: 18px;
+            font-size: 38px;
         }
 
         .confidential {
@@ -126,7 +126,7 @@
     </style>
 </head>
 
-<body>
+<body >
 
     <table class="header-table">
         <tr>
@@ -206,6 +206,7 @@
         * Lembar warna putih untuk pengirim dan warna kuning untuk penerima
     </div>
 
+    <p style="margin-left: auto; float: right;">GAS-028-0</p>
 
 </body>
 

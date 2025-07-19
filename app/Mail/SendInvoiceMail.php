@@ -17,9 +17,10 @@ class SendInvoiceMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public $details;
+    public function __construct($data)
     {
-        //
+        $this->details = $data;
     }
 
     /**
@@ -39,6 +40,7 @@ class SendInvoiceMail extends Mailable
     {
         return new Content(
             view: 'emails.send-invoice',
+            with: $this->details,
         );
     }
 
