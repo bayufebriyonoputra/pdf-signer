@@ -48,7 +48,7 @@ class ImportExcelInvoice extends Component
                     'no_po' => $row[1],
                     'total' => $row[2],
                     'no_invoice' => $row[3],
-                    'tgl_invoice' => $row[4],
+                    'tgl_invoice' => parseRandomDate($row[4]),
                     'tgl_pembayaran' => $row[5],
                     'pic_perusahaan' => $row[6],
                 ];

@@ -106,9 +106,13 @@ class SignConfirm extends ModalComponent
 
             // Menambahkan gambar stamp di halaman terakhir, misalnya
             if ($pageNo === $pageCount) {
-                $stampPath = storage_path('app/public/img/barcode/paraf_ddw.png');
-                $pdf->Image($stampPath, $x_mm + 30, $y_mm_tcpdf - 40, 6, 6, 'PNG'); // Sesuaikan posisi dan ukuran
-                // $pdf->Image($stampPath, $x_mm + 3, $y_mm_tcpdf - 30, 20, 20, 'PNG'); // Sesuaikan posisi dan ukuran
+                // paraf
+                // $stampPath = storage_path('app/public/img/barcode/paraf_ddw.png');
+                // $pdf->Image($stampPath, $x_mm + 30, $y_mm_tcpdf - 40, 6, 6, 'PNG'); // Sesuaikan posisi dan ukuran
+
+                // barcode
+                $stampPath = storage_path('app/public/' . $checker->barcode_path);
+                $pdf->Image($stampPath, $x_mm, $y_mm_tcpdf - 30, 0.5, 20, 'PNG');
             }
         }
         $this->po->update([
@@ -172,19 +176,16 @@ class SignConfirm extends ModalComponent
             // Menambahkan gambar stamp di halaman terakhir, misalnya
             if ($pageNo === $pageCount) {
                 $stampPath = storage_path('app/public/img/barcode/ttd_dyu.png');
-                // $pdf->Image($stampPath, $x_mm, $y_mm_tcpdf - 30, 0.5, 20, 'PNG'); // Sesuaikan posisi dan ukuran
+                // ttd
                 //stamp dyu
-                $pdf->Image($stampPath, $x_mm, $y_mm_tcpdf - 25, 20, 20, 'PNG'); // Sesuaikan posisi dan ukuran
+                // $pdf->Image($stampPath, $x_mm, $y_mm_tcpdf - 25, 20, 20, 'PNG'); // Sesuaikan posisi dan ukuran
                 // stmap yazaki
-                $pdf->Image(storage_path('app/public/img/barcode/stamp-yazaki.png'), $x_mm - 10, $y_mm_tcpdf - 18, 40, 10, 'PNG'); // Sesuaikan posisi dan ukuran
+                // $pdf->Image(storage_path('app/public/img/barcode/stamp-yazaki.png'), $x_mm - 10, $y_mm_tcpdf - 18, 40, 10, 'PNG'); // Sesuaikan posisi dan ukuran
 
                 // Metodde QR Code
-                // $stampPath = storage_path('app/public/' . $checker->barcode_path);
-                // // $pdf->Image($stampPath, $x_mm, $y_mm_tcpdf - 30, 0.5, 20, 'PNG'); // Sesuaikan posisi dan ukuran
-                // //stamp dyu
-                // $pdf->Image($stampPath, $x_mm + 3, $y_mm_tcpdf - 30, 20, 20, 'PNG'); // Sesuaikan posisi dan ukuran
-                // //stmap yazaki
-                // //$pdf->Image(storage_path('app/public/img/stamp-yazaki.png'), $x_mm -10 + 3, $y_mm_tcpdf -20, 40, 10, 'PNG'); // Sesuaikan posisi dan ukuran
+                 $stampPath = storage_path('app/public/' . $checker->barcode_path);
+                $pdf->Image($stampPath, $x_mm + 3, $y_mm_tcpdf - 30, 20, 20, 'PNG'); // Sesuaikan posisi dan ukuran
+
             }
         }
         $this->po->update([

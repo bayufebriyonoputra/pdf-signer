@@ -20,7 +20,7 @@ class SelectPO extends Component
     {
         $visibleIds = \App\Models\MasterInvoice::query()
             ->where('vendor_id', $this->vendorId)
-            ->whereNull('tgl_invoice')
+            ->whereNull('tgl_pembayaran')
             ->pluck('id')
             ->toArray();
 
@@ -41,7 +41,7 @@ class SelectPO extends Component
     {
         return view('livewire.invoice.user.select-p-o', [
             'po' => MasterInvoice::where('vendor_id', $this->vendorId)
-                ->whereNull('tgl_invoice')
+                ->whereNull('tgl_pembayaran')
                 ->get()
         ]);
     }
@@ -60,7 +60,6 @@ class SelectPO extends Component
 
         MasterInvoice::whereIn('id', $this->ids)
             ->update([
-                'tgl_invoice' => now(),
                 'pic_perusahaan' => $this->pic,
                 'tgl_pembayaran' => $tglPayment
             ]);

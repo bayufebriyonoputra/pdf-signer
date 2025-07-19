@@ -20,6 +20,7 @@ class ListEmailInvoice extends Component
     {
         return view('livewire.invoice.list-email-invoice', [
             'invoices' => MasterInvoice::whereNotNull('tgl_pembayaran')
+                ->where('is_emailed', false)
                 ->latest()->paginate(10)
         ]);
     }
@@ -70,6 +71,13 @@ class ListEmailInvoice extends Component
             Mail::to($invoices->first()->vendor->email)
                 ->cc(['purchasing01@sai.co.id'])
                 ->send(new SendInvoiceMail());
+
+            MasterInvoice::whereIn('id', $this->ids)
+                ->update([
+                    'is_emailed' => true
+                ]);
+
+
 
             $this->dispatch('success-notif', message: 'Berhasil kirim email');
             $this->ids = [];
