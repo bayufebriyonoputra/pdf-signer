@@ -30,15 +30,27 @@
                         @enderror
                     </div>
 
-                     {{-- Email --}}
+                    {{-- Email --}}
                     <div>
-                        <label for="email" class="block mb-2 text-sm font-medium text-gray-">Email</label>
-                        <input wire:model='email' type="email" id="email"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                            placeholder="Email Vendor" required />
+                        <label for="email"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
+                        <input @keydown.tab.prevent="" wire:keydown.tab="addEmail" wire:model="email" type="email"
+                            name="email" id="email"
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                            placeholder="Ex: PT BWT PERKASA" />
                         @error('email')
-                            <p class="text-red-500">{{ $message }}</p>
+                            <p class="text-sm text-red-600">{{ $message }}</p>
                         @enderror
+
+                        <!-- List Email yang sudah ditambahkan -->
+                        <div class="flex flex-wrap gap-3 mt-3">
+                            @foreach ($emails as $index => $email)
+                                <span class="relative px-4 py-2 text-sky-600 bg-sky-200 rounded-md">{{ $email }}
+                                    <i role="button" wire:click="removeEmail({{ $index }})"
+                                        class="absolute top-0 right-0.5 text-xs text-red-500 bi bi-x-circle"></i>
+                                </span>
+                            @endforeach
+                        </div>
                     </div>
 
                 </div>
@@ -63,19 +75,19 @@
         </div> --}}
 
         <!-- Search & Actions -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        <div class="relative w-full sm:w-64">
-            <input wire:model.live='search' type="text" placeholder="Cari data..."
-                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2.5a7.5 7.5 0 010 15z" />
-                </svg>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div class="relative w-full sm:w-64">
+                <input wire:model.live='search' type="text" placeholder="Cari data..."
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm" />
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1116.65 2.5a7.5 7.5 0 010 15z" />
+                    </svg>
+                </div>
             </div>
-        </div>
 
-    </div>
+        </div>
 
 
         <div class="overflow-x-auto  rounded-lg shadow-md border border-gray-200">
@@ -108,7 +120,9 @@
                             <td class="px-6 py-4">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4">{{ $vendor->name ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $vendor->top }} DAYS</td>
-                            <td class="px-6 py-4">{{ $vendor->email }}</td>
+                            <td class="px-6 py-4 whitespace-normal break-words max-w-xs">
+                                {{ $vendor->email }}
+                            </td>
                             <td class="px-6 py-4">
                                 <div class="flex gap-2">
                                     <button wire:click='setEdit({{ $vendor->id }})'

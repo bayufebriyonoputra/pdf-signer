@@ -22,8 +22,9 @@ class MasterVendor extends Component
     public $isEdit = false;
     public $name = "";
     public $top;
-    public $email= '';
+    public $email = '';
     public $search = "";
+    public $emails = [];
 
     public function render()
     {
@@ -34,6 +35,8 @@ class MasterVendor extends Component
                 ->paginate(10)
         ]);
     }
+
+
 
     public function save()
     {
@@ -52,11 +55,33 @@ class MasterVendor extends Component
                 ->update([
                     'name' => $this->name,
                     'top' => $this->top,
-                    'email' => $this->email
+                    'email' => implode('|', $this->emails)
                 ]);
             $this->resetField();
             $this->dispatch('success-notif', message: 'Berhasil mengedit data');
         }
+    }
+
+    public function removeEmail($index)
+    {
+        unset($this->emails[$index]);
+        $this->emails = array_values($this->emails);
+    }
+
+    public function addEmail()
+    {
+        $this->validate([
+            'email' => 'required|email',
+        ]);
+        // Cek apakah email sudah ada di dalam list
+        if (in_array($this->email, $this->emails)) {
+            // Tambahkan pesan error langsung ke field 'email'
+            $this->addError('email', 'Email sudah ada di dalam daftar.');
+            return;
+        }
+
+        $this->emails[] = $this->email;
+        $this->email = '';
     }
 
     public function setEdit($vendorId)
@@ -66,7 +91,7 @@ class MasterVendor extends Component
         $this->vendorId = $vendor->id;
         $this->name = $vendor->name;
         $this->top = $vendor->top;
-        $this->email = $vendor->email;
+        $this->emails = explode('|', $vendor->email);
     }
 
     public function destroy($id)
@@ -81,6 +106,8 @@ class MasterVendor extends Component
         $this->isEdit = false;
         $this->name = "";
         $this->top = 0;
+        $this->email = '';
+        $this->emails = [];
     }
 
 
@@ -95,18 +122,12 @@ class MasterVendor extends Component
                 'required',
                 'numeric'
             ],
-            'email' => [
-                'required',
-                'email'
-            ]
         ];
 
         if ($this->isEdit && $this->vendorId) {
             $rules['name'][] = Rule::unique('vendors', 'name')->ignore($this->vendorId);
-            $rules['email'][] = Rule::unique('vendors', 'email')->ignore($this->vendorId);
         } else {
             $rules['name'][] = 'unique:vendors,name';
-            $rules['email'][] = 'unique:vendors,email';
         }
         return $rules;
     }
