@@ -9,7 +9,7 @@
   <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 640px; margin: auto; background-color: #ffffff; padding: 24px; border-radius: 8px; box-shadow: 0 0 6px rgba(0,0,0,0.05);">
     <tr>
       <td>
-        <p style="margin: 0 0 12px; font-size: 16px;">Selamat Pagi,</p>
+        <p style="margin: 0 0 12px; font-size: 16px;">Dear Supplier,</p>
         <p style="margin: 0 0 24px; font-size: 16px;">Silakan terlampir Tanda Terima Invoice Tagihan.<br />Terima kasih.</p>
 
         <div style="border-left: 4px solid #dc2626; padding-left: 16px; margin: 24px 0; background-color: #fef2f2; padding: 12px 16px;">

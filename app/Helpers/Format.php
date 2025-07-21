@@ -32,7 +32,7 @@ if (!function_exists('toRoman')) {
     }
 }
 
-if (function_exists('parseRandomDate')) {
+if (!function_exists('parseRandomDate')) {
     function parseRandomDate($dateString)
     {
         $formats = [

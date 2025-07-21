@@ -51,6 +51,7 @@
                                 <span class="text-[11px] normal-case font-medium text-gray-500">Invoice</span>
                             </div>
                         </th>
+                        <th class="px-4 py-3 text-left font-semibold">Total</th>
                         <th class="px-4 py-3 text-left font-semibold">
                             <div class="flex flex-col leading-tight">
                                 <span>Tanggal</span>
@@ -63,7 +64,7 @@
                                 <span class="text-[11px] normal-case font-medium text-gray-500">Pembayaran</span>
                             </div>
                         </th>
-                        <th class="px-4 py-3 text-left font-semibold">Total</th>
+
                         <th class="px-4 py-3 text-left font-semibold">
                             <div class="flex flex-col leading-tight">
                                 <span>PIC</span>
@@ -85,9 +86,9 @@
                             <td class="px-6 py-4">{{ $inv->vendor->name ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $inv->no_po }}</td>
                             <td class="px-6 py-4">{{ $inv->no_invoice ?? '-' }}</td>
+                            <td class="px-6 py-4">{{ rupiah($inv->total) ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $inv->tgl_invoice ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $inv->tgl_pembayaran ?? '-' }}</td>
-                            <td class="px-6 py-4">{{ $inv->total ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $inv->pic_perusahaan ?? '-' }}</td>
                             <td class="px-6 py-4">{{ $inv->note ?? '-' }}</td>
                             <td class="px-6 py-4">
