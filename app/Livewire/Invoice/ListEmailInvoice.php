@@ -22,7 +22,7 @@ class ListEmailInvoice extends Component
         return view('livewire.invoice.list-email-invoice', [
             'invoices' => MasterInvoice::whereNotNull('tgl_pembayaran')
                 ->where('is_emailed', false)
-                ->latest()->paginate(10)
+                ->latest()
         ]);
     }
 

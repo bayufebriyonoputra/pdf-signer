@@ -1,4 +1,4 @@
-<div class="max-w-6xl mx-auto px-4">
+<div class=" mx-auto px-4">
 
     <!-- Search & Actions -->
     <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
@@ -27,7 +27,7 @@
 
 
 
-    <div class="max-w-6xl mx-auto px-4 py-8">
+    <div class=" mx-auto px-4 py-8">
         <div class="overflow-x-auto  rounded-lg shadow-md border border-gray-200">
             <table class="whitespace-nowrap divide-y divide-gray-200 bg-white table-auto min-w-max">
                 <thead class="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
@@ -114,7 +114,7 @@
 
 
     <!-- Pagination -->
-    {{ $invoices->links(data: ['scrollTo' => false]) }}
+    {{-- {{ $invoices->links(data: ['scrollTo' => false]) }} --}}
 </div>
 
 <x-slot:script>

@@ -67,8 +67,8 @@
         <select wire:model='stats' id="status"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ">
             <option selected>Choose a status</option>
-            <option value="{{ \App\Enum\StatusEnum::NEW }}">New</option>
-            <option value="{{ \App\Enum\StatusEnum::CHECKED }}">Siap Cek</option>
+            <option value="{{ \App\Enum\StatusEnum::NEW }}">Siap Cek</option>
+            <option value="{{ \App\Enum\StatusEnum::CHECKED }}">Siap Approve</option>
             <option value="{{ \App\Enum\StatusEnum::SIGNED }}">Finish Approve</option>
             <option value="{{ \App\Enum\StatusEnum::CONFIRMED }}">Confirm</option>
             <option value="{{ \App\Enum\StatusEnum::SENDED }}">Sended</option>

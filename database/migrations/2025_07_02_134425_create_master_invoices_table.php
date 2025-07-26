@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('master_invoices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('vendor_id')->constrained('vendors')->cascadeOnDelete();
-            $table->string('no_po')->unique();
+            $table->string('no_po');
             $table->string('no_invoice')->nullable()->unique();
             $table->date('tgl_invoice')->nullable();
             $table->date('tgl_pembayaran')->nullable();
-            $table->integer('total');
+            $table->bigInteger('total');
             $table->text('note')->nullable();
             $table->timestamps();
         });

@@ -56,99 +56,7 @@ Route::get('/tes/{text}', function ($text) {
 Route::get('/tes-pdf', function () {
 
     $data = DetailPo::whereIn('header_id', [
-        6974,
-        6975,
-        6976,
-        6977,
-        6978,
-        6979,
-        6980,
-        6981,
-        6982,
-        6983,
-        6984,
-        6985,
-        6986,
-        6987,
-        6988,
-        6989,
-        6990,
-        6991,
-        6992,
-        6995,
-        6996,
-        6997,
-        6998,
-        6999,
-        7000,
-        7001,
-        7002,
-        7003,
-        7004,
-        7005,
-        7006,
-        7007,
-        7008,
-        7009,
-        7010,
-        7011,
-        7012,
-        7013,
-        7014,
-        7015,
-        7016,
-        7017,
-        7018,
-        7019,
-        7020,
-        7021,
-        7022,
-        7023,
-        7024,
-        7025,
-        7026,
-        7027,
-        7028,
-        7033,
-        7034,
-        7035,
-        7036,
-        7037,
-        7038,
-        7039,
-        7040,
-        7041,
-        7042,
-        7043,
-        7044,
-        7045,
-        7046,
-        7047,
-        7048,
-        7049,
-        7050,
-        7051,
-        7052,
-        7053,
-        7054,
-        7055,
-        7056,
-        7057,
-        7058,
-        7059,
-        7060,
-        7061,
-        7062,
-        7063,
-        7064,
-        7065,
-        7066,
-        7067,
-        7068,
-        7069,
-        7070,
-        7071,
-        7072
+        5211
     ])->get();
 
     $successCount = 0;
@@ -212,16 +120,24 @@ Route::get('/tes-pdf', function () {
 
                 // Menambahkan gambar stamp di halaman terakhir, misalnya
                 if ($pageNo === $pageCount) {
-                    $stampPath = storage_path('app/public/img/barcode/ttd_dyu.png');
-                    // ttd
-                    //stamp dyu
-                    // $pdf->Image($stampPath, $x_mm, $y_mm_tcpdf - 25, 20, 20, 'PNG'); // Sesuaikan posisi dan ukuran
-                    // stmap yazaki
-                    // $pdf->Image(storage_path('app/public/img/barcode/stamp-yazaki.png'), $x_mm - 10, $y_mm_tcpdf - 18, 40, 10, 'PNG'); // Sesuaikan posisi dan ukuran
 
-                    // Metodde QR Code
+                    // ddw
+                    $stampPath = storage_path('app/public/' . $checker->barcode_path);
+                    $pdf->Image($stampPath, $x_mm, $y_mm_tcpdf - 30, 0.5, 20, 'PNG');
+
+                    // //dyu
+                    $stampPath = storage_path('app/public/img/barcode/ttd_dyu.png');
                     $stampPath = storage_path('app/public/' . $checker->barcode_path);
                     $pdf->Image($stampPath, $x_mm + 3, $y_mm_tcpdf - 30, 20, 20, 'PNG');
+
+
+                    // revise
+                    $img = public_path('img/Revised.png');
+                    $pdf->Image($img, $x_mm - 100, $y_mm_tcpdf - 50, 60, 30, 'PNG'); // Sesuaikan posisi dan ukuran
+
+                    $pdf->SetFont('helvetica', '', 12); // Atur font dan ukuran teks
+                    $pdf->SetTextColor(255, 0, 0); // Warna merah (RGB: 255, 0, 0)
+                    $pdf->Text($x_mm - 85, $y_mm_tcpdf - 35, "14 Jul 25");
                 }
             }
 

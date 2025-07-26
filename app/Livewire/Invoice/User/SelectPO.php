@@ -4,6 +4,7 @@ namespace App\Livewire\Invoice\User;
 
 use App\Models\MasterInvoice;
 use App\Models\Vendor;
+use Carbon\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -64,7 +65,9 @@ class SelectPO extends Component
                 'tgl_pembayaran' => $tglPayment
             ]);
 
-        $this->dispatch('success-notif', message: 'Berhasil confirm');
+        $tglNotif = Carbon::parse($tglPayment)->isoFormat('DD-MMM-YY');
+
+        $this->dispatch('success-notif', message: "Berhasil dengan estimasi tanggal pembayaran $tglNotif");
         $this->ids = [];
         $this->vendorId = null;
         $this->dispatch('clearChoices');

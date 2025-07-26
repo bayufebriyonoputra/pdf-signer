@@ -16,6 +16,8 @@ class MasterInvoice extends Component
 
     public $vendors;
     public $isEdit = false;
+    public $search = '';
+
 
     // field
     public $invId;
@@ -40,8 +42,18 @@ class MasterInvoice extends Component
     #[On('reRender')]
     public function render()
     {
+        $invoices = ModelsMasterInvoice::with('vendor')
+            ->when($this->search, function ($query) {
+                $query->where('no_po', 'like', "%$this->search%")
+                    ->orWhereHas('vendor', function ($vendorQuery) {
+                        $vendorQuery->where('name', 'like', "%$this->search%");
+                    });
+            })
+            ->latest()
+            ->paginate(10);
+
         return view('livewire.invoice.master-invoice', [
-            'invoices' => ModelsMasterInvoice::latest()->paginate(10)
+            'invoices' => $invoices
         ]);
     }
 
