@@ -240,10 +240,6 @@ final class ListPoAdminTable extends PowerGridComponent
                 ->slot('<i class="bi bi-send-check-fill"></i>')
                 ->class('bg-sky-500 hover:bg-sky-600 text-white rounded-md px-4 py-2')
                 ->openModal('modals.po.send-email', ['id' => $row->id]),
-            Button::add('cancel')
-                ->slot('<i class="bi bi-x-octagon-fill"></i>')
-                ->class('bg-red-500 hover:bg-red-700 text-white rounded-md px-4 py-2')
-                ->dispatch('cancel-po', ['id' => $row->id]),
             Button::add('confirm')
                 ->slot('<i class="bi bi-check-square-fill"></i>')
                 ->class('bg-green-600 hover:bg-green-800 text-white rounded-md px-4 py-2')
@@ -256,6 +252,10 @@ final class ListPoAdminTable extends PowerGridComponent
                 ->slot('<i class="bi bi-arrow-counterclockwise"></i>')
                 ->class('bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-md')
                 ->dispatch('undo', ['id' => $row->id]),
+            Button::add('cancel')
+                ->slot('<i class="bi bi-x-octagon-fill"></i>')
+                ->class('bg-red-500 hover:bg-red-700 text-white rounded-md px-4 py-2')
+                ->dispatch('cancel-po', ['id' => $row->id]),
         ];
     }
 

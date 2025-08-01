@@ -16,19 +16,37 @@
 
     {{-- Action --}}
 
-        <div class="flex gap-2">
-            <input wire:model='customMessage' type="text" id="name"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                placeholder="Custom Message" />
-            <button wire:target='batchSend' wire:loading.attr='disabled' wire:click='batchSend'
-                class="bg-sky-400 max-w-[200px] w-full hover:bg-sky-500 rounded-md px-4 py-2 text-white"><i class="bi bi-send me-4"></i>Send
-                Email</button>
-        </div>
+    <div class="flex gap-2">
+        <input wire:model='customMessage' type="text" id="name"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+            placeholder="Custom Message" />
+        <button wire:target='batchSend' wire:loading.attr='disabled' wire:click='batchSend'
+            class="bg-sky-400 max-w-[200px] w-full hover:bg-sky-500 rounded-md px-4 py-2 text-white"><i
+                class="bi bi-send me-4"></i>Send
+            Email</button>
+    </div>
 
 
 
     <div class=" mx-auto px-4 py-8">
         <div class="overflow-x-auto  rounded-lg shadow-md border border-gray-200">
+
+            {{-- Button filter --}}
+            <div class="flex p-4">
+                <button @click="$wire.set('mode', 'belum')" @class([
+                    'text-white  rounded-l-md px-4 py-2',
+                    'bg-blue-800 hover:bg-blue-900' => $mode == 'belum',
+                    'bg-blue-500 hover:bg-blue-600' => $mode != 'belum',
+                ])
+                    >Belum Kirim</button>
+                <button @click="$wire.set('mode', 'sudah')" @class([
+                    'text-white  rounded-r-md px-4 py-2',
+                    'bg-blue-800 hover:bg-blue-900' => $mode == 'sudah',
+                    'bg-blue-500 hover:bg-blue-600' => $mode != 'sudah',
+                ])
+                   >Sudah Kirim</button>
+            </div>
+
             <table class="whitespace-nowrap divide-y divide-gray-200 bg-white table-auto min-w-max">
                 <thead class="bg-gray-50 text-gray-700 text-sm uppercase tracking-wider">
                     <tr>

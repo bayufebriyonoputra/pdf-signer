@@ -52,7 +52,7 @@ class SendInvoiceMail extends Mailable
     public function attachments(): array
     {
         return [
-            Attachment::fromPath(public_path('temp/tanda-terima-invoice.pdf'))
+            Attachment::fromPath(public_path('temp/' . $this->details['filename']))
         ];
     }
 }
